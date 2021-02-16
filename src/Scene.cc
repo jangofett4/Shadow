@@ -110,7 +110,7 @@ void Scene::SceneUpdate(GameTime* time)
         (*go)->ComponentUpdate(time);
 }
 
-void Scene::SceneRender(const RenderContext& context)
+void Scene::SceneRender(RenderContext& context)
 {
     if (!mainCamera)
         return;

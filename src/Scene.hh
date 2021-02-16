@@ -42,5 +42,5 @@ public:
 
     void SceneStart();
     void SceneUpdate(GameTime*);
-    void SceneRender(const RenderContext&);
+    void SceneRender(RenderContext&);
 };

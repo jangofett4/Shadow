@@ -31,14 +31,12 @@ struct Uniform
     Uniform(std::string, UniformType, GLint);
 
     template<typename T>
-    static Uniform Create(std::string, UniformType, GLint, T);
+    static Uniform* Create(std::string, UniformType, GLint, T);
 };
-
-#include "Material.ipp"
 
 class Material : public Component
 {
-    std::unordered_map<std::string, Uniform> uniforms;
+    std::unordered_map<std::string, Uniform*> uniforms;
 
 public:
     virtual const std::string Name();
@@ -59,6 +57,10 @@ public:
     bool Value(std::string, int32_t);
 
     GLuint GetProgram();
+    Uniform* GetUniform(std::string name);
 
     void Apply();
+    void ApplyUniform(Uniform* uniform);
 };
+
+#include "Material.ipp"

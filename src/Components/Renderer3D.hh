@@ -22,7 +22,7 @@ public:
     ~Renderer3D();
 
     void Setup();
-    void Render(const RenderContext&);
+    void Render(RenderContext&);
 
     void SetMesh(Mesh*);
 };

@@ -60,7 +60,7 @@ bool GameObject::AddChildren(GameObject* go)
     return true;
 }
 
-void GameObject::Render(const RenderContext context)
+void GameObject::Render(RenderContext& context)
 {
     for (auto it = renderers.begin(); it != renderers.end(); it++)
         (*it)->Render(context);

@@ -13,5 +13,5 @@ public:
     Renderer2D();
     virtual ~Renderer2D();
 
-    void Render(const RenderContext&);
+    void Render(RenderContext&);
 };

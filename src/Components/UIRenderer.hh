@@ -18,5 +18,5 @@ public:
     ~UIRenderer();
 
     void Setup();
-    void Render(const RenderContext&);
+    void Render(RenderContext&);
 };

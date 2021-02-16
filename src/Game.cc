@@ -61,6 +61,9 @@ Game::Game(const char* title, int width, int height)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
+    // Disable 4x. textures size requirement
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
     videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     glfwSetWindowPos(
         Window,
@@ -122,6 +125,7 @@ void Game::Start()
     // Call 'Start' functions of some GameObjects
     CurrentScene->SceneStart();
 
+    RenderContext ctx;
     while (!Exit)
     {
         auto start_time = Time::now();
@@ -149,7 +153,10 @@ void Game::Start()
         auto projMat = glm::perspective(glm::radians(cam->FOV), (float)width / height, cam->NearClippingPlane, cam->FarClippingPlane);
         auto screenProjMat = glm::ortho(0.0f, (float)width, (float)height, 0.0f);
 
-        CurrentScene->SceneRender(RenderContext(viewMat, projMat, screenProjMat));
+        ctx.view = viewMat;
+        ctx.projection = projMat;
+        ctx.screen = screenProjMat;
+        CurrentScene->SceneRender(ctx);
 
         // Present
         glfwSwapBuffers(Window);

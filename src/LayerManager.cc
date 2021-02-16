@@ -5,7 +5,7 @@
 
 Layer::Layer(std::string name) : Name(name), gameobjects() { }
 
-void Layer::Render(const RenderContext& context)
+void Layer::Render(RenderContext& context)
 {
     for (auto it = gameobjects.begin(); it != gameobjects.end(); it++)
         (*it)->Render(context);
@@ -54,13 +54,13 @@ Layer* LayerManager::GetLayer(std::string name)
     return (*layer);
 }
 
-void LayerManager::RenderForward(const RenderContext& context)
+void LayerManager::RenderForward(RenderContext& context)
 {
     for (auto it = layers.begin(); it != layers.end(); it++)
         (*it)->Render(context);
 }
 
-void LayerManager::RenderBackward(const RenderContext& context)
+void LayerManager::RenderBackward(RenderContext& context)
 {
     for (auto it = layers.rbegin(); it != layers.rend(); it++)
         (*it)->Render(context);

@@ -31,7 +31,7 @@ UIWindow::UIWindow(Material* mat) : UIElement(mat)
     /* Position */ mat->shader->VertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
 }
 
-void UIWindow::Render(const RenderContext& context)
+void UIWindow::Render(RenderContext& context)
 {
     auto mat = GetMaterial();
     if (!mat)

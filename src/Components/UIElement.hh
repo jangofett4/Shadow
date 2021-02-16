@@ -18,5 +18,5 @@ public:
     virtual void Setup();
     Material* GetMaterial();
 
-    void Render(const RenderContext&) = 0;
+    void Render(RenderContext&) = 0;
 };

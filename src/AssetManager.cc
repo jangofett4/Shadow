@@ -193,7 +193,6 @@ FontFace* AssetManager::LoadFont(std::string file)
     if (error)
     {
         std::cout << "[AssetManager] Unable to load truetype font: " << FT_Error_String(error) << std::endl;
-        delete rawFontFace;
         return nullptr;
     }
 

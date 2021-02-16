@@ -19,21 +19,29 @@ int main()
 
     auto shaderModel = game->Assets->LoadShader("assets/shaders/base");
     auto shaderUI = game->Assets->LoadShader("assets/shaders/ui");
+    auto shaderText = game->Assets->LoadShader("assets/shaders/text");
+    
     auto model = game->Assets->LoadObjMesh("assets/bunny.obj");
     auto texture = game->Assets->LoadTexture("assets/textures/bunny-atlas.png");
     auto fontface = game->Assets->LoadFont("assets/fonts/fantasque-sans-mono-regular.ttf");
 
-    if (!shaderUI || !shaderModel || !model || !texture || !fontface)
+    if (!shaderUI || !shaderModel || !model || !texture || !fontface || !shaderText)
         return -1;
 
-    auto font = fontface->LoadSize(11);
+    auto font = fontface->LoadSize(14);
 
     if (shaderUI->DidError)
     {
         std::cout << shaderUI->GetError() << std::endl;
         return -1;
     }
-    
+
+    if (shaderText->DidError)
+    {
+        std::cout << shaderText->GetError() << std::endl;
+        return -1;
+    }
+
     {
         auto mat = new Material(shaderModel);
         mat->Value("diffuseColor", vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -56,10 +64,10 @@ int main()
 
         auto box = new GameObject("Box");
         box->transform->Scale = vec3(200, 100, 1);
-        box->transform->Position = vec3(100, 100, 1);
+        box->transform->Position = vec3(100, 100, 0);
         box->transform->Rotation = vec3(45, 0, 0);
         box->AddComponent(mater);
-        box->AddComponent(new UIBox(mater));
+        box->AddComponent(new UIBox(mater, font));
         scene->AddGameObject(box, scene->Layers.UI);
     }
    
@@ -78,58 +86,3 @@ int main()
     delete scene;
     return 0;
 }
-
-/*
-int main()
-{
-    auto game = new Game("TestGame", 1280, 720);
-    auto mainScene = new Scene();
-
-    auto mesh = game->Assets->LoadObjMesh("assets/bunny.obj");
-    auto shader = game->Assets->LoadShader("assets/shaders/base");
-    auto texture = game->Assets->LoadTexture("assets/textures/bunny-atlas.png");
-    
-    if (!mesh || !shader || !texture)
-        return -1;
-
-    if (shader->DidError)
-    {
-        std::cout << shader->GetError() << std::endl;
-        return -1;
-    }
-    
-    auto go = new GameObject("Go");
-    go->transform->Scale = vec3(0.1, 0.1, 0.1);
-    // go->transform->Position = vec3(0, 0, 0);
-    auto material = new Material(shader);
-    auto renderer = new Renderer3D(material);
-    
-    material->Value("diffuseColor", vec3(1.0f, 1.0f, 1.0f));
-    material->Value("albedo", texture);
-
-    renderer->SetMesh(mesh);
-    go->AddComponent(material);
-    go->AddComponent(renderer);
-    go->AddComponent(new RotScript());
-    mainScene->AddGameObject(go);
-
-    auto camgo = new GameObject("MainCamera");
-    auto cam = new Camera(0.1f, 1000.0f, 45.0f);
-    camgo->transform->Position = vec3(0, 0, -100);
-    // camgo->AddComponent(new FreeLook());
-
-    camgo->AddComponent(cam);
-
-    mainScene->AddGameObject(camgo);
-    mainScene->SetMainCamera("MainCamera");
-
-    // game->LockCursor();
-    game->LoadScene(mainScene);
-    game->Start();
-
-    delete game;
-    delete mainScene;
-
-    return 0;
-}
-*/

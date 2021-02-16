@@ -1,6 +1,9 @@
 #pragma once
 
+#include "Texture.hh"
+
 #include <vector>
+#include <string>
 #include <map>
 
 #include <freetype2/ft2build.h>
@@ -12,7 +15,7 @@
 
 struct Glyph
 {
-    GLuint      texture;
+    Texture*    texture;
     glm::vec2   size;
     glm::vec2   bearing;
     size_t      offset;
@@ -28,6 +31,8 @@ public:
 
     GlyphSet(size_t);
     ~GlyphSet();
+
+    std::vector<Glyph> Text(std::string string);
 };
 
 class FontFace

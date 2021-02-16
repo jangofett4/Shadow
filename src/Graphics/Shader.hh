@@ -21,10 +21,4 @@ public:
     
     GLuint Program();
     std::string GetError();
-
-    void VertexAttribPointer(int, size_t, GLenum, bool, GLsizei, void*);
-    void EnableVertexAttribArray(int);
-    // TODO: make a proper attribute type so doing this stuff is easier
-    // template<typename T> void Attribute(const char*, size_t, bool);
-    // template<typename T> void Attribute(std::string, size_t, bool);
 };

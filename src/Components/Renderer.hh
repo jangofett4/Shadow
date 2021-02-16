@@ -17,5 +17,5 @@ public:
     virtual ~Renderer();
     
     virtual void Setup() = 0;
-    virtual void Render(const RenderContext&) = 0;
+    virtual void Render(RenderContext&) = 0;
 };

@@ -20,7 +20,7 @@ public:
 
     Layer(std::string);
 
-    void Render(const RenderContext& context);
+    void Render(RenderContext& context);
 private:
     void AddGameObject(GameObject*);
     void RemoveGameObject(GameObject*);
@@ -37,6 +37,6 @@ public:
     Layer* AddLayer(std::string);
     Layer* GetLayer(std::string);
 
-    void RenderForward(const RenderContext&);
-    void RenderBackward(const RenderContext&);
+    void RenderForward(RenderContext&);
+    void RenderBackward(RenderContext&);
 };

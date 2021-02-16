@@ -26,7 +26,7 @@ Material::~Material()
 #define MaterialValueOverride(T, UT) bool Material::Value(std::string name, T value) { \
     auto u = uniforms.find(name); \
     if (u != uniforms.end()) \
-        u->second.value = value; \
+        u->second->value = value; \
     else \
     { \
         auto program = shader->Program(); \
@@ -53,7 +53,7 @@ bool Material::Value(std::string name, Texture* value)
 
     auto u = uniforms.find(name);
     if (u != uniforms.end())
-        u->second.value = value;
+        u->second->value = value;
     else
     {
         auto program = shader->Program();
@@ -66,46 +66,59 @@ bool Material::Value(std::string name, Texture* value)
     return true;
 }
 
+void Material::ApplyUniform(Uniform* uniform)
+{
+    switch(uniform->type)
+    {
+        case UniformType::Vec3:
+            glUniform3fv(uniform->location, 1, value_ptr(std::get<vec3>(uniform->value)));
+            break;
+        case UniformType::Vec4:
+            glUniform4fv(uniform->location, 1, value_ptr(std::get<vec4>(uniform->value)));
+            break;
+        case UniformType::Mat3:
+            glUniformMatrix3fv(uniform->location, 1, false, value_ptr(std::get<mat3>(uniform->value)));
+            break;
+        case UniformType::Mat4:
+            glUniformMatrix4fv(uniform->location, 1, false, value_ptr(std::get<mat4>(uniform->value)));
+            break;
+        case UniformType::Texture:
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, std::get<Texture*>(uniform->value)->GetTextureID());
+            glUniform1i(uniform->location, 0);
+            break;
+        case UniformType::Float:
+            glUniform1f(uniform->location, std::get<float>(uniform->value));
+            break;
+        case UniformType::Double:
+            glUniform1d(uniform->location, std::get<double>(uniform->value));
+            break;
+        case UniformType::Uint32:
+            glUniform1ui(uniform->location, std::get<uint32_t>(uniform->value));
+            break;
+        case UniformType::Int32:
+            glUniform1i(uniform->location, std::get<int32_t>(uniform->value));
+            break;
+        default:
+            break;
+    }
+}
+
 void Material::Apply()
 {
     for (auto it = uniforms.begin(); it != uniforms.end(); it++)
-        switch (it->second.type)
-        {
-            case UniformType::Vec3:
-                glUniform3fv(it->second.location, 1, value_ptr(std::get<vec3>(it->second.value)));
-                break;
-            case UniformType::Vec4:
-                glUniform4fv(it->second.location, 1, value_ptr(std::get<vec4>(it->second.value)));
-                break;
-            case UniformType::Mat3:
-                glUniformMatrix3fv(it->second.location, 1, false, value_ptr(std::get<mat3>(it->second.value)));
-                break;
-            case UniformType::Mat4:
-                glUniformMatrix4fv(it->second.location, 1, false, value_ptr(std::get<mat4>(it->second.value)));
-                break;
-            case UniformType::Texture:
-                glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, std::get<Texture*>(it->second.value)->GetTextureID());
-                glUniform1i(it->second.location, 0);
-                break;
-            case UniformType::Float:
-                glUniform1f(it->second.location, std::get<float>(it->second.value));
-                break;
-            case UniformType::Double:
-                glUniform1d(it->second.location, std::get<double>(it->second.value));
-                break;
-            case UniformType::Uint32:
-                glUniform1ui(it->second.location, std::get<uint32_t>(it->second.value));
-                break;
-            case UniformType::Int32:
-                glUniform1i(it->second.location, std::get<int32_t>(it->second.value));
-                break;
-            default:
-                break;
-        }
+        ApplyUniform(it->second);
 }
 
 GLuint Material::GetProgram()
 {
     return shader->Program();
+}
+
+Uniform* Material::GetUniform(std::string name)
+{
+    auto find = uniforms.find(name);
+    if (find != uniforms.end())
+        return find->second;
+    return nullptr;
 }

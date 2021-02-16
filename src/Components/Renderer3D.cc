@@ -44,19 +44,19 @@ void Renderer3D::SetMesh(Mesh* mesh)
     glGenBuffers(1, &vbo_vertex);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_vertex);
     glBufferData(GL_ARRAY_BUFFER, mesh->Vertices.size() * sizeof(vec3), &mesh->Vertices[0], GL_STATIC_DRAW);
-    /* Position */ material->shader->VertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+    /* Position */ glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0); glEnableVertexAttribArray(0);
 
     // Create UV VBO
     glGenBuffers(1, &vbo_uv);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
     glBufferData(GL_ARRAY_BUFFER, mesh->UVs.size() * sizeof(vec2), &mesh->UVs[0], GL_STATIC_DRAW);
-    /* UV       */ material->shader->VertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+    /* UV       */ glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0); glEnableVertexAttribArray(1);
 
     GLuint vbo_normal;
     glGenBuffers(1, &vbo_normal);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_normal);
     glBufferData(GL_ARRAY_BUFFER, mesh->Normals.size() * sizeof(vec3), &mesh->Normals[0], GL_STATIC_DRAW);
-    /* Normal   */ material->shader->VertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
+    /* Normal   */ glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0); glEnableVertexAttribArray(2);
 
     /*
     // Create EBO
@@ -66,27 +66,12 @@ void Renderer3D::SetMesh(Mesh* mesh)
     */
 }
 
-void Renderer3D::Render(const RenderContext& context)
+void Renderer3D::Render(RenderContext& context)
 {
     if (!material || !model)
         return; // skip drawing, no material
-    
-    glUseProgram(material->GetProgram());
 
-    mat4 matModel(1.0f);
-    matModel = glm::translate(matModel, gotransform->Position);
-    matModel = glm::rotate(matModel, glm::radians(gotransform->Rotation.x), vec3(1.f, 0.f, 0.f));
-    matModel = glm::rotate(matModel, glm::radians(gotransform->Rotation.y), vec3(0.f, 1.f, 0.f));
-    matModel = glm::rotate(matModel, glm::radians(gotransform->Rotation.z), vec3(0.f, 0.f, 1.f));
-    matModel = glm::scale(matModel, gotransform->Scale);
-
-    auto mvp = context.projection * context.view * matModel;
-    material->Value("modelViewProj", mvp);
-
-    // Apply material settings
-    material->Apply();
-
-    glBindVertexArray(vao);
-    // TODO: Use draw elements instead for probably better VRAM usage
-    glDrawArrays(GL_TRIANGLES, 0, model->Vertices.size()); // TODO: check uint
+    material->Value("modelViewProj", context.ModelViewProjection3D(gotransform));
+    context.SetupTriple(material, vao);
+    context.RenderArrays(model->Vertices.size());
 }

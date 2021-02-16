@@ -47,7 +47,7 @@ public:
 
     bool AddChildren(GameObject*);
 
-    void Render(const RenderContext);
+    void Render(RenderContext&);
 };
 
 #include "GameObject.ipp"

@@ -10,6 +10,6 @@ void UIRenderer::Setup()
 
 }
 
-void UIRenderer::Render(const RenderContext&)
+void UIRenderer::Render(RenderContext&)
 {
 }

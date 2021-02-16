@@ -21,5 +21,5 @@ public:
     UIWindow(Material*);
 
     // void Setup();
-    void Render(const RenderContext&);
+    void Render(RenderContext&);
 };

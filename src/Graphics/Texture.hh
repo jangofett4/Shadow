@@ -10,6 +10,6 @@ public:
 
     GLuint GetTextureID();
 
-    Texture(int, int, uint8_t*);
+    Texture(int width, int height, uint8_t* data, GLenum internalFormat = GL_RGBA, GLenum format = GL_RGBA);
     ~Texture();
 };

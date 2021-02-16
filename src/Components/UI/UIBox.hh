@@ -1,6 +1,7 @@
 #include <string>
 
 #include "../../RenderContext.hh"
+#include "../../Graphics/FontFace.hh"
 #include "../UIElement.hh"
 #include "../Material.hh"
 
@@ -13,13 +14,13 @@ using namespace glm;
 class UIBox : public UIElement
 {
     GLuint vao, vbo;
-
+    GlyphSet* font;
 public:
     virtual const std::string Name();
     float width, height;
 
-    UIBox(Material*);
+    UIBox(Material*, GlyphSet*);
 
     // void Setup();
-    void Render(const RenderContext&);
+    void Render(RenderContext&);
 };
