@@ -4,3 +4,5 @@ LIST(APPEND SRC
     ${PWD}/Texture.cc
     ${PWD}/FontFace.cc
 )
+
+include("${PWD}/Shaders/CMakeLists.txt")

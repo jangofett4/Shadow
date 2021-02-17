@@ -25,7 +25,7 @@ Scene::~Scene()
         delete (*it);
 }
 
-bool Scene::AddGameObject(GameObject* go, Layer* layer)
+bool Scene::AddGameObject(GameObject* go, Layer<GameObject*>* layer)
 {
     for (auto it = gameObjects.begin(); it != gameObjects.end(); it++)
         if ((*it)->Name == go->Name)
@@ -34,7 +34,7 @@ bool Scene::AddGameObject(GameObject* go, Layer* layer)
     gameObjects.push_back(go);
     if (!layer)
         layer = Layers.Default;
-    layer->AddGameObject(go);
+    layer->AddObject(go);
 
     return true;
 }
@@ -50,9 +50,9 @@ bool Scene::RemoveGameObject(GameObject* go)
     return false;
 }
 
-void Scene::SetGameObjectLayer(GameObject* go, Layer* layer)
+void Scene::SetGameObjectLayer(GameObject* go, Layer<GameObject*>* layer)
 {
-    layer->AddGameObject(go); // switching is automatically done by layer
+    layer->AddObject(go); // switching is automatically done by layer
 }
 
 bool Scene::SetMainCamera(std::string name)

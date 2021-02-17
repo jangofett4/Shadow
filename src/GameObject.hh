@@ -20,19 +20,18 @@ using namespace glm;
 class GameObject
 {
     friend class Scene;
-    friend class Layer;
 
     std::unordered_map<std::type_index, Component*> components;
     std::vector<ShouldUpdate*> updateNeeded;
     std::vector<GameObject*> children;
     GameObject* parent;
-    Layer* layer;
 
     std::vector<Renderer*> renderers;
 
 public:
     const std::string Name;
     std::string Tag;
+    Layer<GameObject*>* layer;
 
     Transform* transform;
 

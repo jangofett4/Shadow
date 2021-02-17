@@ -11,32 +11,35 @@ class GameObject;
 
 using namespace glm;
 
+template<typename T>
 class Layer
 {
-    friend class Scene;
-    std::vector<GameObject*> gameobjects;
+    std::vector<T> objects;
 public:
     const std::string Name;
 
     Layer(std::string);
 
     void Render(RenderContext& context);
-private:
-    void AddGameObject(GameObject*);
-    void RemoveGameObject(GameObject*);
+
+    void AddObject(T);
+    void RemoveObject(T);
 };
 
+template<typename T>
 class LayerManager
 {
-    std::vector<Layer*> layers;
+    std::vector<Layer<T>*> layers;
 public:
 
     LayerManager();
     ~LayerManager();
 
-    Layer* AddLayer(std::string);
-    Layer* GetLayer(std::string);
+    Layer<T>* AddLayer(std::string);
+    Layer<T>* GetLayer(std::string);
 
     void RenderForward(RenderContext&);
     void RenderBackward(RenderContext&);
 };
+
+#include "LayerManager.ipp"

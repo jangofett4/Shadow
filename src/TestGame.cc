@@ -1,6 +1,8 @@
 #include <iostream>
 
-#include "Components/UI/UIBox.hh"
+#include "UI/UIContainer.hh"
+#include "UI/Controls/UIWindow.hh"
+#include "UI/Controls/UIButton.hh"
 
 #include "Components.hh"
 #include "Game.hh"
@@ -19,13 +21,13 @@ int main()
 
     auto shaderModel = game->Assets->LoadShader("assets/shaders/base");
     auto shaderUI = game->Assets->LoadShader("assets/shaders/ui");
-    auto shaderText = game->Assets->LoadShader("assets/shaders/text");
+    // auto shaderText = game->Assets->LoadShader("assets/shaders/text");
     
     auto model = game->Assets->LoadObjMesh("assets/bunny.obj");
     auto texture = game->Assets->LoadTexture("assets/textures/bunny-atlas.png");
     auto fontface = game->Assets->LoadFont("assets/fonts/fantasque-sans-mono-regular.ttf");
 
-    if (!shaderUI || !shaderModel || !model || !texture || !fontface || !shaderText)
+    if (!shaderUI || !shaderModel || !model || !texture || !fontface /*|| !shaderText */)
         return -1;
 
     auto font = fontface->LoadSize(14);
@@ -36,11 +38,13 @@ int main()
         return -1;
     }
 
+    /*
     if (shaderText->DidError)
     {
         std::cout << shaderText->GetError() << std::endl;
         return -1;
     }
+    */
 
     {
         auto mat = new Material(shaderModel);
@@ -60,15 +64,15 @@ int main()
 
     {
         auto mater = new Material(shaderUI);
-        mater->Value("diffuseColor", vec4(0.0f, 1.0f, 1.0f, 0.7f));
-
-        auto box = new GameObject("Box");
-        box->transform->Scale = vec3(200, 100, 1);
-        box->transform->Position = vec3(100, 100, 0);
-        box->transform->Rotation = vec3(45, 0, 0);
-        box->AddComponent(mater);
-        box->AddComponent(new UIBox(mater, font));
-        scene->AddGameObject(box, scene->Layers.UI);
+        auto go = new GameObject("container");
+        auto container = new UIContainer();
+        auto win = new UIWindow(vec2(100, 100), vec2(300, 450), mater);
+        auto btn = new UIButton("Bruh Button", vec2(0, 16), vec2(0, 25), mater, font);
+        win->AddControl(btn);
+        // bg->color = vec4(1, 0, 0.4, 0.8);
+        container->root = win;
+        go->AddComponent(container);
+        scene->AddGameObject(go);
     }
    
     {

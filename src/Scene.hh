@@ -16,23 +16,23 @@ using namespace std;
 class Scene
 {
     std::vector<GameObject*> gameObjects;
-    LayerManager layerManager;
+    LayerManager<GameObject*> layerManager;
 
     Camera* mainCamera;
 
 public:
     struct {
-        Layer* UI;
-        Layer* Default;
+        Layer<GameObject*>* UI;
+        Layer<GameObject*>* Default;
     } Layers;
 
     Scene();
     ~Scene();
 
-    bool AddGameObject(GameObject*, Layer* = nullptr);
+    bool AddGameObject(GameObject*, Layer<GameObject*>* = nullptr);
     bool RemoveGameObject(GameObject*);
     bool RemoveGameObject(std::string);
-    void SetGameObjectLayer(GameObject*, Layer* = nullptr);
+    void SetGameObjectLayer(GameObject*, Layer<GameObject*>* = nullptr);
 
     bool SetMainCamera(std::string);
     Camera* GetMainCamera() const { return mainCamera; }

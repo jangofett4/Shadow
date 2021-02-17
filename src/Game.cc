@@ -52,6 +52,7 @@ Game::Game(const char* title, int width, int height)
 
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
     // Enable backface culling for better performance
     glEnable(GL_CULL_FACE);

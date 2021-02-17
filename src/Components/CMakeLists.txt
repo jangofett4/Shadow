@@ -9,8 +9,4 @@ LIST(APPEND SRC
     ${PWD}/Renderer.cc
     ${PWD}/Renderer2D.cc
     ${PWD}/Renderer3D.cc
-    ${PWD}/UIRenderer.cc
-    ${PWD}/UIElement.cc
 )
-
-include("${PWD}/UI/CMakeLists.txt")
