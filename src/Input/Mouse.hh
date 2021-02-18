@@ -23,6 +23,10 @@ public:
     bool IsRMBReleased();
     bool IsMMBReleased();
 
+    bool IsLMBClicked();
+    bool IsRMBClicked();
+    bool IsMMBClicked();
+
     double GetMouseScrollX();
     double GetMouseScrollY();
 
@@ -30,4 +34,7 @@ public:
     double GetMouseY();
     double GetMouseMotionX();
     double GetMouseMotionY();
+
+    // Should be called after each frame
+    void FrameReset();
 };

@@ -68,6 +68,8 @@ int main()
         auto container = new UIContainer();
         auto win = new UIWindow(vec2(100, 100), vec2(300, 450), mater);
         auto btn = new UIButton("Bruh Button", vec2(0, 16), vec2(0, 25), mater, font);
+        btn->events->MouseClickEvent.Subscribe([](vec2* pos){
+        });
         win->AddControl(btn);
         // bg->color = vec4(1, 0, 0.4, 0.8);
         container->root = win;

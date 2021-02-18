@@ -8,7 +8,6 @@
 class UIButton : public UIControl
 {
 public:
-    vec4 color;
     std::string label;
     GlyphSet* font;
 

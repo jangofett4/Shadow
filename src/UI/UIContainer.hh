@@ -8,11 +8,12 @@
 #include "../Components/Renderer.hh"
 
 class UILayoutEngine;
+class UIEventManager;
 
-class UIContainer : public Renderer
+class UIContainer : public Renderer, public ShouldUpdate
 {
-    friend class UILayoutEngine;
     UILayoutEngine* layoutEngine;
+    UIEventManager* eventManager;
 
 public:
     virtual const std::string Name();
@@ -21,37 +22,9 @@ public:
     UIContainer();
     virtual ~UIContainer();
 
-    virtual void Setup();
-    virtual void Render(RenderContext& context);
-};
-
-/*
-class UIContainer : public Renderer
-{
-    friend class UILayoutEngine;
-
-    std::vector<UIControl*> controls;
-    LayerManager<UIControl*> layerManager;
-
-    UILayoutEngine* layoutEngine;
-
-public:
-    vec2 size;
-    vec2 position;
-
-    struct {
-        Layer<UIControl*>* Background;
-        Layer<UIControl*>* Default;
-    } Layers;
-
-    virtual const std::string Name();
-
-    UIContainer(vec2 position, vec2 size);
-    virtual ~UIContainer();
-
-    void AddControl(UIControl* control, Layer<UIControl*>* layer = nullptr);
+    virtual void Start();
+    virtual void Update(GameTime* time);
 
     virtual void Setup();
     virtual void Render(RenderContext& context);
 };
-*/

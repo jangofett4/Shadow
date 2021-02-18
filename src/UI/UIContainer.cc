@@ -1,33 +1,32 @@
 #include "UIContainer.hh"
 #include "UILayoutEngine.hh"
+#include "UIEventManager.hh"
 
 const std::string UIContainer::Name() { return "UI Stack"; }
 
 UIContainer::UIContainer()
 {
     layoutEngine = new UILayoutEngine(this);
-    // Layers.Background = layerManager.AddLayer("Background");
-    // Layers.Default = layerManager.AddLayer("Default");
+    eventManager = new UIEventManager(this);
 }
 
 UIContainer::~UIContainer()
 {
-    // for (auto it = controls.begin(); it != controls.end(); it++)
-    //     delete (*it);
     if (root)
         delete root;
     delete layoutEngine;
+    delete eventManager;
 }
 
-/*
-void UIContainer::AddControl(UIControl* control, Layer<UIControl*>* layer)
+void UIContainer::Start()
 {
-    controls.push_back(control);
-    if (layer == nullptr)
-        layer = Layers.Default;
-    layer->AddObject(control);
 }
-*/
+
+void UIContainer::Update(GameTime* time)
+{
+    if (root)
+        eventManager->PushEvents(root);
+}
 
 void UIContainer::Setup() { }
 void UIContainer::Render(RenderContext& context)

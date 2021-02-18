@@ -1,9 +1,26 @@
 #include "UIButton.hh"
 
-UIButton::UIButton(std::string label, vec2 position, vec2 size, Material* material, GlyphSet* font) : UIControl(position, size, material), label(label), font(font)
+UIButton::UIButton(std::string label, vec2 position, vec2 size, Material* material, GlyphSet* font)
+    :   UIControl(position, size, material,
+            vec4(0.5, 0.5, 0.5, 0.9),
+            vec4(0.6, 0.6, 0.6, 0.9),
+            vec4(0.7, 0.7, 0.7, 0.9)
+        ),
+        label(label), font(font)
 {
     anchor = AnchorMode::Left | AnchorMode::Right;
-    color = vec4(0.5, 0.5, 0.5, 0.9);
+
+    events->MouseHoverEvent.Subscribe([&](auto){
+        color = hoverColor;
+    });
+
+    events->MouseLeftHoldEvent.Subscribe([&](auto){
+        color = clickColor;
+    });
+    
+    events->MouseExitEvent.Subscribe([&](auto){
+        color = GetOriginalColor();
+    });
 }
 
 void UIButton::Render(RenderContext& context)

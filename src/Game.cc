@@ -134,6 +134,10 @@ void Game::Start()
         // Clear color & depth buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // Poll events before objects are updated, so they can use freshly created events
+        // TODO: hopefully this is OK, works fine for now
+        glfwPollEvents();
+
         // Update Scene
         CurrentScene->SceneUpdate(time);
 
@@ -161,7 +165,6 @@ void Game::Start()
 
         // Present
         glfwSwapBuffers(Window);
-        glfwPollEvents();
 
         if (glfwGetKey(Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             break;
@@ -173,7 +176,8 @@ void Game::Start()
         
         time->FrameTime = end_time - start_time;
         time->Delta = std::chrono::duration_cast<std::chrono::milliseconds>(time->FrameTime).count() / 1000.0f;
-        std::cout << "FrameTime: " << time->FrameTime.count() << ", Delta: " << time->Delta << std::endl;
+        // std::cout << "FrameTime: " << time->FrameTime.count() << ", Delta: " << time->Delta << std::endl;
+        Input::Mouse->FrameReset();
     }
 
     delete time;
