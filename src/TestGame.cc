@@ -1,7 +1,10 @@
 #include <iostream>
 
-#include "UI/UIContainer.hh"
+#include "UI/UIRoot.hh"
 #include "UI/Controls/UIWindow.hh"
+#include "UI/Controls/UIStack.hh"
+#include "UI/Controls/UISplitHorizontal.hh"
+#include "UI/Controls/UISplitVertical.hh"
 #include "UI/Controls/UIButton.hh"
 
 #include "Components.hh"
@@ -65,12 +68,24 @@ int main()
     {
         auto mater = new Material(shaderUI);
         auto go = new GameObject("container");
-        auto container = new UIContainer();
-        auto win = new UIWindow(vec2(100, 100), vec2(300, 450), mater);
-        auto btn = new UIButton("Bruh Button", vec2(0, 16), vec2(0, 25), mater, font);
-        btn->events->MouseClickEvent.Subscribe([](vec2* pos){
-        });
-        win->AddControl(btn);
+        auto container = new UIRoot();
+        auto win = new UIWindow(vec2(100, 100), vec2(300, 450));
+        auto splith = new UISplitHorizontal();
+        auto splitv = new UISplitVertical();
+        auto stack1 = new UIStack();
+        auto stack2 = new UIStack();
+        auto stack3 = new UIStack();
+        for (size_t i = 0; i < 3; i++)
+            stack1->AddControl(new UIButton("Br", vec2(), vec2(0, 25), font));
+        for (size_t i = 0; i < 3; i++)
+            stack2->AddControl(new UIButton("uh", vec2(), vec2(0, 25), font));
+        for (size_t i = 0; i < 3; i++)
+            stack3->AddControl(new UIButton("Moment" + std::to_string(i), vec2(), vec2(0, 25), font));
+        splitv->AddControl(stack1, VerticalSplitSide::Left);
+        splitv->AddControl(stack2, VerticalSplitSide::Right);
+        splith->AddControl(splitv, HorizontalSplitSide::Top);
+        splith->AddControl(stack3, HorizontalSplitSide::Bottom);
+        win->AddControl(splith);
         // bg->color = vec4(1, 0, 0.4, 0.8);
         container->root = win;
         go->AddComponent(container);

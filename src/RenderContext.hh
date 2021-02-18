@@ -21,9 +21,11 @@ class RenderContext
     // Generic Quad VBO & VBO, useful for textured 2D rendering
     GLuint quad_textured_vao, quad_textured_vbo_position, quad_textured_vbo_uv;
 
-    // Generic text shader & material, useful because no one want to provide 2 materials for each UI element
-    // Even more nobody likes to provide 1 material for each UI element, might fix that too
+    // Generic text shader & material
     Material* textMaterial; Shader* textShader;
+
+    // Generic UI shader & material
+    Material* uiMaterial; Shader* uiShader;
 
 public:
     mat4 view;
@@ -50,13 +52,19 @@ public:
     mat4 ModelScreenProjection(Transform*);
     mat4 ModelScreenProjection(vec2 position, vec2 size, float rotation = 0);
 
-    void RenderText(std::string string, vec2 position, vec4 color, GlyphSet* font);
+    void SetUIColor(vec4 color);
+    void SetTextColor(vec4 color);
+
+    void RenderText(std::string string, vec2 position, GlyphSet* font);
 
     void Render2D(vec2 position, vec2 size, float rotation, Material* material);
     void Render2DTextured(vec2 position, vec2 size, float rotation, Material* material, Texture* texture);
     
     void Render2DScreenspace(vec2 position, vec2 size, float rotation, Material* material);
     void Render2DScreenspaceTextured(vec2 position, vec2 size, float rotation, Material* material, Texture* texture);
+
+    void Render2DScreenspace(vec2 position, vec2 size, float rotation);
+    void Render2DScreenspaceTextured(vec2 position, vec2 size, float rotation, Texture* texture);
 
     void RenderArrays(size_t count);
     void RenderArrays(size_t count, GLenum mode);

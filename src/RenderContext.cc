@@ -1,5 +1,7 @@
 #include "RenderContext.hh"
+
 #include "Graphics/Shaders/TextShader.hh"
+#include "Graphics/Shaders/UIShader.hh"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -63,6 +65,9 @@ RenderContext::RenderContext()
 
     textShader = new Shaders::TextShader();
     textMaterial = new Material(textShader);
+
+    uiShader = new Shaders::UIShader();
+    uiMaterial = new Material(uiShader);
 }
 
 RenderContext::RenderContext(mat4 view, mat4 proj, mat4 screen) : view(view), projection(proj), screen(screen)
@@ -78,6 +83,9 @@ RenderContext::~RenderContext()
 
     delete textMaterial;
     delete textShader;
+
+    delete uiMaterial;
+    delete uiShader;
 }
 
 void RenderContext::SetupTriple(Material* mat, GLuint vao)
@@ -197,14 +205,38 @@ void RenderContext::Render2DScreenspaceTextured(vec2 position, vec2 size, float 
     RenderArrays(6);
 }
 
-void RenderContext::RenderText(std::string string, vec2 position, vec4 color, GlyphSet* font)
+void RenderContext::Render2DScreenspace(vec2 position, vec2 size, float rotation)
+{
+    uiMaterial->Value("modelViewProj", ModelScreenProjection(position, size, rotation));
+    SetupTriple(uiMaterial, quad_vao);
+    RenderArrays(6);
+}
+
+void RenderContext::Render2DScreenspaceTextured(vec2 position, vec2 size, float rotation, Texture* texture)
+{
+    uiMaterial->Value("modelViewProj", ModelScreenProjection(position, size, rotation));
+    uiMaterial->Value("texture2D", texture);
+    SetupTriple(uiMaterial, quad_vao);
+    RenderArrays(6);
+}
+
+void RenderContext::SetUIColor(vec4 color)
+{
+    uiMaterial->Value("color", color);
+}
+
+void RenderContext::SetTextColor(vec4 color)
+{
+    textMaterial->Value("fsTextColor", color);
+}
+
+void RenderContext::RenderText(std::string string, vec2 position, GlyphSet* font)
 {
     auto gen = font->Text(string);
     
     UseProgram(textMaterial);
     
     textMaterial->Value("modelViewProj", screen);   // No transformation for model itself.
-    textMaterial->Value("fsTextColor", color);      // Text color applied only once, all chars use same
     textMaterial->Apply();                          // Apply screen transformation for next draws
     textMaterial->Value("fsCharTexture", (Texture*)nullptr);
 
