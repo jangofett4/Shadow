@@ -28,8 +28,7 @@ void UIWindow::RemoveControl(UIControl* control)
 
 void UIWindow::Render(RenderContext& context)
 {
-    context.SetUIColor(color);
-    context.Render2DScreenspace(position, size, 0);
+    context.RenderUIQuad(position, size, 0, color);
     for (auto it = controls.begin(); it != controls.end(); it++)
         (*it)->Render(context);
 }

@@ -28,7 +28,7 @@ UIControl::UIControl(float x, float y, float w, float h, vec4 color)
         anchor(AnchorMode::Normal),
         origPosition(position), origSize(size),
         color(color), origColor(color),
-        parent(nullptr), events(new UIEvents())
+        parent(nullptr), events(new UIEvents()), isFocused(false)
 { }
 
 UIControl::UIControl(vec2 position, vec2 size, vec4 color)
@@ -36,7 +36,7 @@ UIControl::UIControl(vec2 position, vec2 size, vec4 color)
         anchor(AnchorMode::Normal),
         origPosition(position), origSize(size),
         color(color), origColor(color),
-        parent(nullptr), events(new UIEvents())
+        parent(nullptr), events(new UIEvents()), isFocused(false)
 { }
 
 UIControl::UIControl(vec4 pos_size, vec4 color)
@@ -44,7 +44,7 @@ UIControl::UIControl(vec4 pos_size, vec4 color)
         anchor(AnchorMode::Normal),
         origPosition(position), origSize(size), 
         color(color), origColor(color),
-        parent(nullptr), events(new UIEvents())
+        parent(nullptr), events(new UIEvents()), isFocused(false)
 { }
 
 UIControl::~UIControl()
@@ -56,6 +56,10 @@ vec2 UIControl::GetOriginalSize() { return origSize; }
 vec2 UIControl::GetOriginalPosition() { return origPosition; }
 
 vec4 UIControl::GetOriginalColor() { return origColor; }
+
+vec2 UIControl::GetRelativePosition(vec2 abs) { return abs - position; }
+
+bool UIControl::IsFocused() { return isFocused; }
 
 void UIControl::UpdateLayout()
 {
@@ -161,6 +165,7 @@ void UIControl::ProcessEvents()
     auto mpY = Input::Mouse->GetMouseY();
     auto mpClick = Input::Mouse->IsLMBClicked();    // Full click
     auto mpHold = Input::Mouse->IsLMBPressed();     // Press & hold
+    
 
     vec2 evposition(mpX, mpY);
     

@@ -16,6 +16,10 @@ static vec2 quad_vbo_verts[] = {
     vec2(1, 0), vec2(0, 1), vec2(1, 1),
 };
 
+static vec2 circle_vbo_verts[] = {
+    #include "Circle360.inc"
+};
+
 RenderContext::RenderContext()
 {
     /* Text VAO & VBOs */
@@ -43,6 +47,17 @@ RenderContext::RenderContext()
 
     glBindBuffer(GL_ARRAY_BUFFER, quad_vbo_position);
     glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(vec2), &quad_vbo_verts[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
+    glEnableVertexAttribArray(0);
+
+    /* Untextured circle VAO & VBO */
+    glGenVertexArrays(1, &circle_vao);
+    glBindVertexArray(circle_vao);
+
+    glGenBuffers(1, &circle_vbo_position);
+
+    glBindBuffer(GL_ARRAY_BUFFER, circle_vbo_position);
+    glBufferData(GL_ARRAY_BUFFER, 361 * sizeof(vec2), &circle_vbo_verts[0], GL_STATIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
     glEnableVertexAttribArray(0);
 
@@ -197,21 +212,6 @@ void RenderContext::Render2DScreenspace(vec2 position, vec2 size, float rotation
     RenderArrays(6);
 }
 
-void RenderContext::Render2DScreenspaceTextured(vec2 position, vec2 size, float rotation, Material* material, Texture* texture)
-{
-    material->Value("modelViewProj", ModelScreenProjection(position, size, rotation));
-    material->Value("texture2D", texture);
-    SetupTriple(material, quad_vao);
-    RenderArrays(6);
-}
-
-void RenderContext::Render2DScreenspace(vec2 position, vec2 size, float rotation)
-{
-    uiMaterial->Value("modelViewProj", ModelScreenProjection(position, size, rotation));
-    SetupTriple(uiMaterial, quad_vao);
-    RenderArrays(6);
-}
-
 void RenderContext::Render2DScreenspaceTextured(vec2 position, vec2 size, float rotation, Texture* texture)
 {
     uiMaterial->Value("modelViewProj", ModelScreenProjection(position, size, rotation));
@@ -220,17 +220,24 @@ void RenderContext::Render2DScreenspaceTextured(vec2 position, vec2 size, float 
     RenderArrays(6);
 }
 
-void RenderContext::SetUIColor(vec4 color)
+void RenderContext::RenderUIQuad(vec2 position, vec2 size, float rotation, vec4 color)
 {
     uiMaterial->Value("color", color);
+    uiMaterial->Value("modelViewProj", ModelScreenProjection(position, size, rotation));
+    SetupTriple(uiMaterial, quad_vao);
+    RenderArrays(6);
 }
 
-void RenderContext::SetTextColor(vec4 color)
+void RenderContext::RenderUICircle(vec2 position, float radius, vec4 color)
 {
-    textMaterial->Value("fsTextColor", color);
+    auto r2 = radius / 2;
+    uiMaterial->Value("color", color);
+    uiMaterial->Value("modelViewProj", ModelScreenProjection(position + vec2(r2, r2), vec2(radius, radius)));
+    SetupTriple(uiMaterial, circle_vao);
+    RenderArrays(361, GL_TRIANGLE_FAN);
 }
 
-void RenderContext::RenderText(std::string string, vec2 position, GlyphSet* font)
+void RenderContext::RenderUIText(std::string string, vec2 position, GlyphSet* font, vec4 color)
 {
     auto gen = font->Text(string);
     
@@ -239,6 +246,7 @@ void RenderContext::RenderText(std::string string, vec2 position, GlyphSet* font
     textMaterial->Value("modelViewProj", screen);   // No transformation for model itself.
     textMaterial->Apply();                          // Apply screen transformation for next draws
     textMaterial->Value("fsCharTexture", (Texture*)nullptr);
+    textMaterial->Value("fsTextColor", color);
 
     auto samplerUniform = textMaterial->GetUniform("fsCharTexture");
 

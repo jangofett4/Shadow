@@ -1,7 +1,7 @@
 SET(PWD ${CMAKE_CURRENT_LIST_DIR})
 LIST(APPEND SRC 
-    ${PWD}/UIControl
-    ${PWD}/UIRoot
+    ${PWD}/UIControl.cc
+    ${PWD}/UIRoot.cc
     # ${PWD}/UIEventManager
     # ${PWD}/UILayoutEngine
 )

@@ -18,8 +18,11 @@ class RenderContext
     // Generic Quad VAO & VBO, useful for 2D rendering
     GLuint quad_vao, quad_vbo_position;
 
-    // Generic Quad VBO & VBO, useful for textured 2D rendering
+    // Generic Quad VAO & VBO, useful for textured 2D rendering
     GLuint quad_textured_vao, quad_textured_vbo_position, quad_textured_vbo_uv;
+
+    // Generic Cricle VAO & VBO, useful for 2D UI rendering
+    GLuint circle_vao, circle_vbo_position;
 
     // Generic text shader & material
     Material* textMaterial; Shader* textShader;
@@ -36,6 +39,7 @@ public:
     RenderContext();
     ~RenderContext();
 
+    
     void SetupTriple(Material*, GLuint);
     
     void UseProgram(Shader*);
@@ -52,19 +56,15 @@ public:
     mat4 ModelScreenProjection(Transform*);
     mat4 ModelScreenProjection(vec2 position, vec2 size, float rotation = 0);
 
-    void SetUIColor(vec4 color);
-    void SetTextColor(vec4 color);
-
-    void RenderText(std::string string, vec2 position, GlyphSet* font);
-
     void Render2D(vec2 position, vec2 size, float rotation, Material* material);
     void Render2DTextured(vec2 position, vec2 size, float rotation, Material* material, Texture* texture);
-    
-    void Render2DScreenspace(vec2 position, vec2 size, float rotation, Material* material);
-    void Render2DScreenspaceTextured(vec2 position, vec2 size, float rotation, Material* material, Texture* texture);
 
-    void Render2DScreenspace(vec2 position, vec2 size, float rotation);
+    void Render2DScreenspace(vec2 position, vec2 size, float rotation, Material* material);
     void Render2DScreenspaceTextured(vec2 position, vec2 size, float rotation, Texture* texture);
+    
+    void RenderUIQuad(vec2 position, vec2 size, float rotation, vec4 color);
+    void RenderUICircle(vec2 positon, float radius, vec4 color);
+    void RenderUIText(std::string string, vec2 position, GlyphSet* font, vec4 color);
 
     void RenderArrays(size_t count);
     void RenderArrays(size_t count, GLenum mode);

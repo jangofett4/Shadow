@@ -45,6 +45,8 @@ class UIControl
 
     vec2 origSize;              /* Original size                                                */
     vec2 origPosition;          /* Original position                                            */
+    bool isFocused;             /* Is this control in focus now?                                */
+
 public:
     vec2 position;              /* Position of the element relative to container top-left       */
     vec2 size;                  /* Size of the element, double axis anchoring will edit this    */
@@ -73,6 +75,10 @@ public:
 
     vec4 GetOriginalColor();
 
+    vec2 GetRelativePosition(vec2 abs);
+
+    bool IsFocused();
+    
     // Default layout engine, uses parent bounds if possible
     virtual void UpdateLayout();
 
