@@ -8,6 +8,10 @@ class UISlider : public UIControl
     vec4 handleColor;
 
 public:
+    struct {
+        CallbackStack<int> OnChangeEvent {};
+    } _events;
+
     UISlider(vec2 position, float length);
 
     int GetValue();

@@ -9,7 +9,6 @@
 
 #include "Scene.hh"
 #include "AssetManager.hh"
-#include "Input.hh"
 
 class Game
 {

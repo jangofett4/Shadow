@@ -30,13 +30,16 @@ class RenderContext
     // Generic UI shader & material
     Material* uiMaterial; Shader* uiShader;
 
+    // GameTime, useful to provide time information to shaders
+    GameTime* time;
+    
 public:
     mat4 view;
     mat4 projection;
     mat4 screen;
     
-    RenderContext(mat4, mat4, mat4);
-    RenderContext();
+    //RenderContext(mat4, mat4, mat4);
+    RenderContext(GameTime* time);
     ~RenderContext();
 
     
@@ -60,11 +63,12 @@ public:
     void Render2DTextured(vec2 position, vec2 size, float rotation, Material* material, Texture* texture);
 
     void Render2DScreenspace(vec2 position, vec2 size, float rotation, Material* material);
-    void Render2DScreenspaceTextured(vec2 position, vec2 size, float rotation, Texture* texture);
+    void Render2DScreenspaceTextured(vec2 position, vec2 size, float rotation, Texture* texture, Material* material);
     
-    void RenderUIQuad(vec2 position, vec2 size, float rotation, vec4 color);
-    void RenderUICircle(vec2 positon, float radius, vec4 color);
-    void RenderUIText(std::string string, vec2 position, GlyphSet* font, vec4 color);
+    void RenderUIQuad(vec2 position, vec2 size, float rotation, vec4 color, Material* material);
+    void RenderUICircle(vec2 positon, float radius, vec4 color, Material* material);
+    void RenderUIText(std::wstring string, vec2 position, GlyphSet* font, vec4 color, Material* material);
+    void RenderUIText(std::string string, vec2 position, GlyphSet* font, vec4 color, Material* material);
 
     void RenderArrays(size_t count);
     void RenderArrays(size_t count, GLenum mode);

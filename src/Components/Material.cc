@@ -68,6 +68,8 @@ bool Material::Value(std::string name, Texture* value)
 
 void Material::ApplyUniform(Uniform* uniform)
 {
+    if (!uniform)
+        return;
     switch(uniform->type)
     {
         case UniformType::Vec3:

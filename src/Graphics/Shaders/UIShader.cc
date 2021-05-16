@@ -5,10 +5,10 @@ const char* shader_src_ui_vs = R"glsl(
     layout(location = 0) in vec2 vsPosition;
 
     uniform mat4 modelViewProj;
-
+    
     void main()
     {
-        gl_Position = modelViewProj * vec4(vsPosition, 1.0, 1.0);
+        gl_Position = modelViewProj * vec4(vsPosition.xy, 1.0, 1.0);
     }
 )glsl";
 

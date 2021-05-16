@@ -32,7 +32,9 @@ public:
     GlyphSet(size_t);
     ~GlyphSet();
 
-    std::vector<Glyph> Text(std::string string);
+    std::vector<Glyph> Text(std::wstring string);
+    size_t Length(std::wstring string);
+    size_t Length(std::wstring string, size_t to);
 };
 
 class FontFace

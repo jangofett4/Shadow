@@ -1,5 +1,6 @@
 SET(PWD ${CMAKE_CURRENT_LIST_DIR})
 set(SRC
+    GameTime.cc
     GameObject.cc
     AssetManager.cc
     LayerManager.cc

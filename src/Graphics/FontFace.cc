@@ -8,7 +8,9 @@
 
 using namespace glm;
 
-std::string loadedChars = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?!.<>=+-/* ";
+std::wstring loadedChars = LR"chars(
+ 1234567890abcçdefgğhıijklmnoöpqrsştuüvwxyzABCÇDEFGĞHIİJKLMNOÖPQRSŞTUÜVWXYZ!'^%&()[]{}=?_<>£#$½\|+-*/.,:
+)chars";
 
 GlyphSet::GlyphSet(size_t size) : size(size), glyphs() { }
 
@@ -22,7 +24,7 @@ GlyphSet::~GlyphSet()
     }
 }
 
-std::vector<Glyph> GlyphSet::Text(std::string string)
+std::vector<Glyph> GlyphSet::Text(std::wstring string)
 {
     std::vector<Glyph> output;
     auto qmark = glyphs.find('?');
@@ -36,6 +38,25 @@ std::vector<Glyph> GlyphSet::Text(std::string string)
     }
 
     return output;
+}
+
+size_t GlyphSet::Length(std::wstring string)
+{
+    return Length(string, string.size());
+}
+
+size_t GlyphSet::Length(std::wstring string, size_t to)
+{
+    size_t len = 0;
+    auto qmark = glyphs.find('?');
+    for (size_t i = 0; i < to && i < string.size(); i++)
+    {
+        auto c = string[i];
+        auto found = glyphs.find(c);
+        len += found->second.size.x;
+    }
+
+    return len;
 }
 
 FontFace::FontFace(FT_Face face) : face(face)
@@ -81,7 +102,7 @@ GlyphSet* FontFace::LoadSize(size_t height)
                     .offset = (size_t)face->glyph
                 });
                 
-                delete space_texture;
+                delete[] space_texture;
                 break;
             }
             default:

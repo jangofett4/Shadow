@@ -3,17 +3,21 @@
 #include "UI/UIRoot.hh"
 #include "UI/Controls/UIWindow.hh"
 #include "UI/Controls/UIStack.hh"
+#include "UI/Controls/UILabel.hh"
 #include "UI/Controls/UISplitHorizontal.hh"
 #include "UI/Controls/UISplitVertical.hh"
 #include "UI/Controls/UIButton.hh"
+#include "UI/Controls/UITextBox.hh"
 #include "UI/Controls/UIToggleButton.hh"
 #include "UI/Controls/UISlider.hh"
 
 #include "Components.hh"
 #include "Game.hh"
 
+/*
 #include "UserScripts/ObjectKbRotate.cc"
 #include "UserScripts/CameraFreeLook.cc"
+*/
 
 #define Width   1280
 #define Height  720
@@ -32,8 +36,9 @@ int main()
     */
    
     auto fontface = game->Assets->LoadFont("assets/fonts/fantasque-sans-mono-regular.ttf");
+    auto wiggle = game->Assets->LoadShader("assets/shaders/ui", "assets/shaders/ui-wiggly");
 
-    if (!fontface)
+    if (!fontface || !wiggle)
         return -1;
 
     auto font = fontface->LoadSize(14);
@@ -43,17 +48,36 @@ int main()
         auto uiroot = new UIRoot();
         auto window = new UIWindow(vec2(50, 50), vec2(200, 300));
         window->anchor = AnchorMode::Left | AnchorMode::Right | AnchorMode::Top;
-        uiroot->root = window;
 
         {
             auto stack = new UIStack();
-            stack->AddControl(new UISlider(vec2(), 25));
-            stack->AddControl(new UIButton("Test Button 0", vec2(), vec2(25), font));
-            stack->AddControl(new UISlider(vec2(), 25));
-            stack->AddControl(new UIButton("Test Button 0", vec2(), vec2(25), font));
+            auto label = new UILabel("Slider is: 0%", vec2(), font);
+            auto slider = new UISlider(vec2(), 25);
+            slider->_events.OnChangeEvent.Subscribe([label](int* value) {
+                label->label = "Slider is: " + std::to_string(*value) + "%";
+            });
+            stack->AddControl(slider);
+            stack->AddControl(label);
+            stack->AddControl(new UITextBox(vec2(), vec2(25), font));
+
+            auto toggle1 = new UIToggleButton("State: false", vec2(), vec2(25), font);
+            toggle1->_events.OnStateChange.Subscribe([toggle1](bool* state) {
+                auto stateStr = std::string((*state) ? "true" : "false");
+                toggle1->label = "State: " + stateStr;
+            });
+            auto toggle2 = new UIToggleButton("State: false", vec2(), vec2(25), font);
+            toggle2->_events.OnStateChange.Subscribe([toggle2](bool* state) {
+                auto stateStr = std::string((*state) ? "true" : "false");
+                toggle2->label = "State: " + stateStr;
+            });
+
+            stack->AddControl(toggle1);
+            stack->AddControl(toggle2);
+
             window->AddControl(stack);
         }
 
+        uiroot->SetRoot(window);
         uiobj->AddComponent(uiroot);
         scene->AddGameObject(uiobj);
     }

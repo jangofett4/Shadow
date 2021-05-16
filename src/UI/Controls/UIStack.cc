@@ -6,6 +6,7 @@ UIStack::UIStack()
 {
     anchor = AnchorMode::All;
     margin = vec2();
+    cursor = CursorMode::DontAffect;
 }
 
 UIStack::~UIStack()
@@ -65,4 +66,19 @@ void UIStack::ProcessEvents()
     UIControl::ProcessEvents();
     for (auto it = controls.begin(); it != controls.end(); it++)
         (*it)->ProcessEvents();
+}
+
+void UIStack::SetRoot(UIRoot* root)
+{
+    UIControl::SetRoot(root);
+    this->root = root;
+    for (auto it = controls.begin(); it != controls.end(); it++)
+        (*it)->SetRoot(root);
+}
+
+void UIStack::ClearRoot()
+{
+    UIControl::ClearRoot();
+    for (auto it = controls.begin(); it != controls.end(); it++)
+        (*it)->ClearRoot();
 }

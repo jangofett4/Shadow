@@ -84,3 +84,22 @@ void UISplitVertical::ProcessEvents()
     for (auto it = bottomControls.begin(); it != bottomControls.end(); it++)
         (*it)->ProcessEvents();
 }
+
+void UISplitVertical::SetRoot(UIRoot* root)
+{
+    UIControl::SetRoot(root);
+    this->root = root;
+    for (auto it = topControls.begin(); it != topControls.end(); it++)
+        (*it)->SetRoot(root);
+    for (auto it = bottomControls.begin(); it != bottomControls.end(); it++)
+        (*it)->SetRoot(root);
+}
+
+void UISplitVertical::ClearRoot()
+{
+    UIControl::ClearRoot();
+    for (auto it = topControls.begin(); it != topControls.end(); it++)
+        (*it)->ClearRoot();
+    for (auto it = bottomControls.begin(); it != bottomControls.end(); it++)
+        (*it)->ClearRoot();
+}

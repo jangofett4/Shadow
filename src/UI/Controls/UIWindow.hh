@@ -17,4 +17,7 @@ public:
 
     void UpdateLayout();
     void ProcessEvents();
+
+    void SetRoot(UIRoot* root);
+    void ClearRoot();
 };

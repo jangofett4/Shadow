@@ -8,7 +8,12 @@
 class UIToggleButton : public UIControl
 {
     bool state;
+
 public:
+    struct {
+        CallbackStack<bool> OnStateChange {};
+    } _events;
+
     std::string label;
     GlyphSet* font;
 

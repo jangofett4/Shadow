@@ -1,13 +1,21 @@
 #include "UIRoot.hh"
 
-const std::string UIRoot::Name() { return "UI Stack"; }
+const std::string UIRoot::Name() { return "UI Root Node"; }
 
-UIRoot::UIRoot() { }
+UIRoot::UIRoot() : root(nullptr) { }
 
 UIRoot::~UIRoot()
 {
     if (root)
         delete root;
+}
+
+void UIRoot::SetRoot(UIControl* control)
+{
+    if (root)
+        root->ClearRoot();
+    control->SetRoot(this);
+    root = control;
 }
 
 void UIRoot::Start() { } // Residue of ShouldUpdate::Start pure virtual function
@@ -26,4 +34,24 @@ void UIRoot::Render(RenderContext& context)
     root->UpdateLayout();   // Update control layout
     root->Render(context);  // Root should handle rest
     // layerManager.RenderBackward(context);
+}
+
+void UIRoot::AddFocus(UIControl* control)
+{
+    control->isFocused = true;
+    focused.push_back(control);
+}
+
+void UIRoot::SetFocus(UIControl* control)
+{
+    ClearFocus();
+    control->isFocused = true;
+    focused.push_back(control);
+}
+
+void UIRoot::ClearFocus()
+{
+    for (auto it = focused.begin(); it != focused.end(); it++)
+        (*it)->isFocused = false;
+    focused.clear();
 }

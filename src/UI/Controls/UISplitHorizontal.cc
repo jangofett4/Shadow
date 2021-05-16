@@ -7,6 +7,7 @@ UISplitHorizontal::UISplitHorizontal()
     anchor = AnchorMode::All;
     margin = vec2();
     padding = vec2();
+    cursor = CursorMode::DontAffect;
 }
 
 UISplitHorizontal::~UISplitHorizontal()
@@ -83,4 +84,22 @@ void UISplitHorizontal::ProcessEvents()
         (*it)->ProcessEvents();
     for (auto it = bottomControls.begin(); it != bottomControls.end(); it++)
         (*it)->ProcessEvents();
+}
+void UISplitHorizontal::SetRoot(UIRoot* root)
+{
+    UIControl::SetRoot(root);
+    this->root = root;
+    for (auto it = topControls.begin(); it != topControls.end(); it++)
+        (*it)->SetRoot(root);
+    for (auto it = bottomControls.begin(); it != bottomControls.end(); it++)
+        (*it)->SetRoot(root);
+}
+
+void UISplitHorizontal::ClearRoot()
+{
+    UIControl::ClearRoot();
+    for (auto it = topControls.begin(); it != topControls.end(); it++)
+        (*it)->ClearRoot();
+    for (auto it = bottomControls.begin(); it != bottomControls.end(); it++)
+        (*it)->ClearRoot();
 }

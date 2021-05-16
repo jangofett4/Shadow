@@ -4,6 +4,7 @@ UIWindow::UIWindow(vec2 position, vec2 size)
     :   UIControl(position, size, vec4(1, 1, 1, 0.9)),
         controls()
 {
+    cursor = CursorMode::DontAffect;
 }
 
 UIWindow::~UIWindow()
@@ -28,7 +29,7 @@ void UIWindow::RemoveControl(UIControl* control)
 
 void UIWindow::Render(RenderContext& context)
 {
-    context.RenderUIQuad(position, size, 0, color);
+    context.RenderUIQuad(position, size, 0, color, material);
     for (auto it = controls.begin(); it != controls.end(); it++)
         (*it)->Render(context);
 }
@@ -45,4 +46,19 @@ void UIWindow::ProcessEvents()
     UIControl::ProcessEvents();
     for (auto it = controls.begin(); it != controls.end(); it++)
         (*it)->ProcessEvents();
+}
+
+void UIWindow::SetRoot(UIRoot* root)
+{
+    UIControl::SetRoot(root);
+    this->root = root;
+    for (auto it = controls.begin(); it != controls.end(); it++)
+        (*it)->SetRoot(root);
+}
+
+void UIWindow::ClearRoot()
+{
+    UIControl::ClearRoot();
+    for (auto it = controls.begin(); it != controls.end(); it++)
+        (*it)->ClearRoot();
 }

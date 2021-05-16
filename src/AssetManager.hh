@@ -27,7 +27,8 @@ public:
     ~AssetManager();
 
     Mesh* LoadObjMesh(std::string);
-    Shader* LoadShader(std::string);
+    Shader* LoadShader(std::string file);
+    Shader* LoadShader(std::string vsfile, std::string fsfile);
     Texture* LoadTexture(std::string);
     FontFace* LoadFont(std::string);
 

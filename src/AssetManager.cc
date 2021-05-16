@@ -131,6 +131,40 @@ Mesh* AssetManager::LoadObjMesh(std::string file)
     return mesh;
 }
 
+Shader* AssetManager::LoadShader(std::string vsfile, std::string fsfile)
+{
+    std::ifstream ifsvs;
+    ifsvs.open(vsfile + ".vs.glsl");
+    if (!ifsvs.good())
+    {
+        std::cout << "[AssetManager] Error: Unable to open shader vertex shader file: " << vsfile << ".vs.glsl" << std::endl;
+        return nullptr;
+    }
+
+    std::ifstream ifsfs;
+    ifsfs.open(fsfile + ".fs.glsl");
+    if (!ifsfs.good())
+    {
+        std::cout << "[AssetManager] Error: Unable to open shader fragment shader file: " << fsfile << ".fs.glsl" << std::endl;
+        return nullptr;
+    }
+
+    std::stringstream ssvs;
+    ssvs << ifsvs.rdbuf();
+    ifsvs.close();
+
+    std::stringstream ssfs;
+    ssfs << ifsfs.rdbuf();
+    ifsfs.close();
+
+    auto vs = ssvs.str();
+    auto fs = ssfs.str();
+
+    auto shader = new Shader(vs, fs);
+    shaders.push_back(shader);
+    return shader;
+}
+
 Shader* AssetManager::LoadShader(std::string file)
 {
     std::ifstream ifsvs;

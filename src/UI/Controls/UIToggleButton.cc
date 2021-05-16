@@ -6,6 +6,7 @@ UIToggleButton::UIToggleButton(std::string label, vec2 position, vec2 size, Glyp
 {
     hoverColor = vec4(0.6, 0.6, 0.6, 0.9);
     clickColor =vec4(0.7, 0.7, 0.7, 0.9);
+    focusable = true;
     state = false;
     
     anchor = AnchorMode::Left | AnchorMode::Right | AnchorMode::Top;
@@ -24,6 +25,7 @@ UIToggleButton::UIToggleButton(std::string label, vec2 position, vec2 size, Glyp
 
     events->MouseClickEvent.Subscribe([&](auto){
         state = !state;
+        _events.OnStateChange.CallAll(&state);
         color = clickColor;
     });
 }
@@ -35,6 +37,6 @@ bool UIToggleButton::GetState()
 
 void UIToggleButton::Render(RenderContext& context)
 {
-    context.RenderUIQuad(position, size, 0, color);
-    context.RenderUIText(label, vec2(position.x + padding.x, position.y + (size.y / 1.5)), font, vec4(1));
+    context.RenderUIQuad(position, size, 0, color, material);
+    context.RenderUIText(label, vec2(position.x + padding.x, position.y + (size.y / 1.5)), font, vec4(1), material);
 }

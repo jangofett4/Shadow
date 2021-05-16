@@ -12,6 +12,9 @@
 #include "GameTime.hh"
 #include "RenderContext.hh"
 
+#include "Input.hh"
+#include "Helper/CursorManager.hh"
+
 using namespace glm;
 
 Game::Game(const char* title, int width, int height)
@@ -76,6 +79,9 @@ Game::Game(const char* title, int width, int height)
     Input::Cleanup();   // Release resources if someone is already initialized before
     Input::Init(this);
 
+    // Initialize cursor manager
+    CursorManager::Init(this);
+
     DidError = false;
 }
 
@@ -84,7 +90,12 @@ Game::~Game()
     glfwDestroyWindow(Window);
     
     // delete CurrentScene; // scene might be used in another game, dont delete it
+    
+    // Static cleaanup
     Input::Cleanup();
+    CursorManager::Cleanup();
+
+    // General resource freeing
     delete GameMutex;
     delete Assets;
 }
@@ -122,11 +133,13 @@ void Game::Start()
     typedef std::chrono::high_resolution_clock Time;
 
     time->Delta = 0;
+    time->Reset();
 
     // Call 'Start' functions of some GameObjects
     CurrentScene->SceneStart();
 
-    RenderContext ctx;
+    RenderContext ctx(time);
+    
     while (!Exit)
     {
         auto start_time = Time::now();
@@ -176,6 +189,7 @@ void Game::Start()
         
         time->FrameTime = end_time - start_time;
         time->Delta = std::chrono::duration_cast<std::chrono::milliseconds>(time->FrameTime).count() / 1000.0f;
+        time->CalculateElapsed();
         // std::cout << "FrameTime: " << time->FrameTime.count() << ", Delta: " << time->Delta << std::endl;
         Input::Mouse->FrameReset();
     }

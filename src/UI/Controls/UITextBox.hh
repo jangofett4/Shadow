@@ -4,16 +4,25 @@
 
 class UITextBox : public UIControl
 {
-    std::string value;
+    std::wstring value;
+    std::wstring showSlice;
+
+    size_t indexPos;
+    size_t index;
+    size_t line;
 
 public:
-    UITextBox(vec2 position, vec2 size);
+    GlyphSet* font;
 
-    std::string GetValue();
-    void SetValue(std::string value);
-    void Append(std::string value);
-    void Prepend(std::string value);
-    void Insert(std::string value, size_t index);
+    UITextBox(vec2 position, vec2 size, GlyphSet* font);
+
+    std::wstring GetValue();
+    void SetValue(std::wstring str);
+    void Append(std::wstring str);
+    void Prepend(std::wstring str);
+    void Insert(std::wstring str, size_t at);
+
+    void UpdateMetrics();
 
     void Render(RenderContext& context);
 

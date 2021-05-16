@@ -25,4 +25,7 @@ public:
     void UpdateLayout();
     void UpdateLayout(vec2 parentPos, vec2 parentSize);
     void ProcessEvents();
+
+    void SetRoot(UIRoot* root);
+    void ClearRoot();
 };

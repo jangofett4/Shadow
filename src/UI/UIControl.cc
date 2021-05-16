@@ -1,4 +1,5 @@
 #include "UIControl.hh"
+#include "UIRoot.hh"
 
 #include "../Input.hh"
 
@@ -9,6 +10,21 @@ UIEvents::UIEvents()
         MouseLeftHoldEvent(),
         states()
 { }
+
+void UIEvents::SetupKeyPressEvent(EventFunction<int32_t> evt)
+{
+    Input::Keyboard->InstallKeyPressTrigger(evt);
+}
+
+void UIEvents::SetupKeyReleaseEvent(EventFunction<int32_t> evt)
+{
+    Input::Keyboard->InstallKeyReleaseTrigger(evt);
+}
+
+void UIEvents::SetupTextEvent(EventFunction<uint32_t> evt)
+{
+    Input::Keyboard->InstallTextTrigger(evt);
+}
 
 void UIEvents::SetState(std::string state, bool value)
 {
@@ -26,26 +42,35 @@ bool UIEvents::GetState(std::string state)
 UIControl::UIControl(float x, float y, float w, float h, vec4 color)
     :   position(x, y), size(w, h), margin(8.0f), padding(8.0f),
         anchor(AnchorMode::Normal),
-        origPosition(position), origSize(size),
         color(color), origColor(color),
-        parent(nullptr), events(new UIEvents()), isFocused(false)
-{ }
+        parent(nullptr), events(new UIEvents()), focusable(false),
+        isFocused(false), material(nullptr), cursor(CursorMode::Default)
+{
+    origPosition = position;
+    origSize = size;
+}
 
 UIControl::UIControl(vec2 position, vec2 size, vec4 color)
     :   position(position), size(size), margin(8.0f), padding(8.0f),
         anchor(AnchorMode::Normal),
-        origPosition(position), origSize(size),
         color(color), origColor(color),
-        parent(nullptr), events(new UIEvents()), isFocused(false)
-{ }
+        parent(nullptr), events(new UIEvents()), focusable(false),
+        isFocused(false), material(nullptr), cursor(CursorMode::Default)
+{
+    origPosition = position;
+    origSize = size;
+}
 
 UIControl::UIControl(vec4 pos_size, vec4 color)
     :   position(pos_size.x, pos_size.y), size(pos_size.z, pos_size.w), margin(8.0f), padding(8.0f),
         anchor(AnchorMode::Normal),
-        origPosition(position), origSize(size), 
         color(color), origColor(color),
-        parent(nullptr), events(new UIEvents()), isFocused(false)
-{ }
+        parent(nullptr), events(new UIEvents()), focusable(false),
+        isFocused(false), material(nullptr), cursor(CursorMode::Default)
+{
+    origPosition = position;
+    origSize = size;
+}
 
 UIControl::~UIControl()
 {
@@ -104,6 +129,16 @@ void UIControl::UpdateLayout()
             size = newSize;
         }
     }
+}
+
+void UIControl::SetRoot(UIRoot* root)
+{
+    this->root = root;
+}
+
+void UIControl::ClearRoot()
+{
+    root = nullptr;
 }
 
 void UIControl::UpdateLayout(vec2 parentPosition, vec2 parentSize)
@@ -165,21 +200,26 @@ void UIControl::ProcessEvents()
     auto mpY = Input::Mouse->GetMouseY();
     auto mpClick = Input::Mouse->IsLMBClicked();    // Full click
     auto mpHold = Input::Mouse->IsLMBPressed();     // Press & hold
-    
 
     vec2 evposition(mpX, mpY);
     
     if (inbounds_2d(mpX, mpY, position, size))
     {
+        CursorManager::SetCursor(cursor);
         events->SetState("inbound", true);
         events->MouseHoverEvent.CallAll(&evposition);
         if (mpHold)
             events->MouseLeftHoldEvent.CallAll(&evposition);
         if (mpClick)
+        {
+            if (focusable)
+                root->SetFocus(this);
             events->MouseClickEvent.CallAll(&evposition);
+        }
     }
     else
     {
+        // CursorManager::SetCursor(CursorMode::Default);
         if (events->GetState("inbound"))
         {
             events->SetState("inbound", false);
