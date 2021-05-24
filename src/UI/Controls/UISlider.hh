@@ -5,7 +5,6 @@
 class UISlider : public UIControl
 {
     int value;
-    vec4 handleColor;
 
 public:
     struct {

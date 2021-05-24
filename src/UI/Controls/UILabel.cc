@@ -3,7 +3,7 @@
 #include "UILabel.hh"
 
 UILabel::UILabel(std::string label, vec2 position, GlyphSet* font)
-    :   UIControl(position, vec2(font->size), vec4(0)),
+    :   UIControl(position, vec2(font->size)),
         label(label), font(font)
 {
     anchor = AnchorMode::Left | AnchorMode::Right | AnchorMode::Top;
@@ -11,5 +11,5 @@ UILabel::UILabel(std::string label, vec2 position, GlyphSet* font)
 
 void UILabel::Render(RenderContext& context)
 {
-    context.RenderUIText(label, vec2(position.x, position.y + (size.y / 2)), font, vec4(0, 0, 0, 1), material);
+    context.RenderUIText(label, vec2(position.x, position.y + (size.y / 2)), font, GetTheme()->OnSurface(), material);
 }

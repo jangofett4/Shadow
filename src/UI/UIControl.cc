@@ -39,34 +39,31 @@ bool UIEvents::GetState(std::string state)
     return it->second;
 }
 
-UIControl::UIControl(float x, float y, float w, float h, vec4 color)
+UIControl::UIControl(float x, float y, float w, float h)
     :   position(x, y), size(w, h), margin(8.0f), padding(8.0f),
-        anchor(AnchorMode::Normal),
-        color(color), origColor(color),
+        anchor(AnchorMode::Default),
         parent(nullptr), events(new UIEvents()), focusable(false),
-        isFocused(false), material(nullptr), cursor(CursorMode::Default)
+        isFocused(false), material(nullptr), cursor(CursorMode::Default), controls()
 {
     origPosition = position;
     origSize = size;
 }
 
-UIControl::UIControl(vec2 position, vec2 size, vec4 color)
+UIControl::UIControl(vec2 position, vec2 size)
     :   position(position), size(size), margin(8.0f), padding(8.0f),
-        anchor(AnchorMode::Normal),
-        color(color), origColor(color),
+        anchor(AnchorMode::Default),
         parent(nullptr), events(new UIEvents()), focusable(false),
-        isFocused(false), material(nullptr), cursor(CursorMode::Default)
+        isFocused(false), material(nullptr), cursor(CursorMode::Default), controls()
 {
     origPosition = position;
     origSize = size;
 }
 
-UIControl::UIControl(vec4 pos_size, vec4 color)
+UIControl::UIControl(vec4 pos_size)
     :   position(pos_size.x, pos_size.y), size(pos_size.z, pos_size.w), margin(8.0f), padding(8.0f),
-        anchor(AnchorMode::Normal),
-        color(color), origColor(color),
+        anchor(AnchorMode::Default),
         parent(nullptr), events(new UIEvents()), focusable(false),
-        isFocused(false), material(nullptr), cursor(CursorMode::Default)
+        isFocused(false), material(nullptr), cursor(CursorMode::Default), controls()
 {
     origPosition = position;
     origSize = size;
@@ -75,16 +72,51 @@ UIControl::UIControl(vec4 pos_size, vec4 color)
 UIControl::~UIControl()
 {
     delete events;
+    for (auto it = controls.begin(); it != controls.end(); it++)
+        delete *it;
 }
 
 vec2 UIControl::GetOriginalSize() { return origSize; }
 vec2 UIControl::GetOriginalPosition() { return origPosition; }
-
+/*
 vec4 UIControl::GetOriginalColor() { return origColor; }
+*/
 
 vec2 UIControl::GetRelativePosition(vec2 abs) { return abs - position; }
 
+void UIControl::AddControl(UIControl* control)
+{
+    control->parent = this;
+    controls.push_back(control);
+}
+
+void UIControl::RemoveControl(UIControl* control)
+{
+    auto it = std::find(controls.begin(), controls.end(), control);
+    if (it == controls.end()) return;
+    control->parent = nullptr;
+    controls.erase(it);
+}
+
+UIRoot* UIControl::GetRoot()
+{
+    if (!parent)
+        return root;
+    return parent->GetRoot();
+}
+
+UITheme* UIControl::GetTheme()
+{
+    return GetRoot()->Theme;
+}
+
 bool UIControl::IsFocused() { return isFocused; }
+
+void UIControl::Render(RenderContext& context)
+{
+    for (auto it = controls.begin(); it != controls.end(); it++)
+        (*it)->Render(context);
+}
 
 void UIControl::UpdateLayout()
 {
@@ -129,8 +161,12 @@ void UIControl::UpdateLayout()
             size = newSize;
         }
     }
+
+    for (auto it = controls.begin(); it != controls.end(); it++)
+        (*it)->UpdateLayout();
 }
 
+/*
 void UIControl::SetRoot(UIRoot* root)
 {
     this->root = root;
@@ -140,6 +176,7 @@ void UIControl::ClearRoot()
 {
     root = nullptr;
 }
+*/
 
 void UIControl::UpdateLayout(vec2 parentPosition, vec2 parentSize)
 {
@@ -200,6 +237,7 @@ void UIControl::ProcessEvents()
     auto mpY = Input::Mouse->GetMouseY();
     auto mpClick = Input::Mouse->IsLMBClicked();    // Full click
     auto mpHold = Input::Mouse->IsLMBPressed();     // Press & hold
+    auto rootobj = GetRoot();
 
     vec2 evposition(mpX, mpY);
     
@@ -213,7 +251,7 @@ void UIControl::ProcessEvents()
         if (mpClick)
         {
             if (focusable)
-                root->SetFocus(this);
+                rootobj->SetFocus(this);
             events->MouseClickEvent.CallAll(&evposition);
         }
     }
@@ -226,4 +264,7 @@ void UIControl::ProcessEvents()
             events->MouseExitEvent.CallAll(&evposition);
         }
     }
+
+    for (auto it = controls.begin(); it != controls.end(); it++)
+        (*it)->ProcessEvents();
 }

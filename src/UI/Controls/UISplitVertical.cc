@@ -1,20 +1,11 @@
 #include "UISplitVertical.hh"
 
 UISplitVertical::UISplitVertical()
-    :   UIControl(vec2(), vec2(), vec4()),
-        topControls(), bottomControls()
+    :   UIControl(vec2(), vec2(), vec4())
 {
     anchor = AnchorMode::All;
     margin = vec2();
     padding = vec2();
-}
-
-UISplitVertical::~UISplitVertical()
-{
-    for (auto it = topControls.begin(); it != topControls.end(); it++)
-        delete (*it);
-    for (auto it = bottomControls.begin(); it != bottomControls.end(); it++)
-        delete (*it);
 }
 
 void UISplitVertical::AddControl(UIControl* control, VerticalSplitSide side)

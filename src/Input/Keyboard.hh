@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GL/glew>
+#include "../Glew.hh"
 #include <GLFW/glfw3.h>
 #include <vector>
 #include "../CallbackStack.hh"

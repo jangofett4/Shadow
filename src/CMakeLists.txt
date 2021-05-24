@@ -18,15 +18,15 @@ include("Input/CMakeLists.txt")
 include("UI/CMakeLists.txt")
 
 set(CMAKE_CXX_FLAGS
-    # Freetype
+    # Freetype, somehow properly handled in Windows without conflicts
     "-I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/harfbuzz -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include"
 )
 
-if (WIN32)
 # Windows get special treatment, you may want to change these two paths with proper paths in your system
 # include path should contain required include files (glfw, glew, freetype and lodepng)
 # lib path should contain required lib files (same as above)
 # also you will want to copy .dll files into executable folder in order for it to work
+if (WIN32)
 include_directories("C:/Library/include")
 link_directories("C:/Library/lib")
 LIST(APPEND SRC 

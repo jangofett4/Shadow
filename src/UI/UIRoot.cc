@@ -2,7 +2,7 @@
 
 const std::string UIRoot::Name() { return "UI Root Node"; }
 
-UIRoot::UIRoot() : root(nullptr) { }
+UIRoot::UIRoot() : root(nullptr), Theme(MaterialDefaultTheme()) { }
 
 UIRoot::~UIRoot()
 {
@@ -13,8 +13,8 @@ UIRoot::~UIRoot()
 void UIRoot::SetRoot(UIControl* control)
 {
     if (root)
-        root->ClearRoot();
-    control->SetRoot(this);
+        root->root = nullptr;
+    control->root = this;
     root = control;
 }
 

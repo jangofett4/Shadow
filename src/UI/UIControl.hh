@@ -1,5 +1,6 @@
 #pragma once
 
+#include "UITheme.hh"
 #include "../RenderContext.hh"
 #include "../LayerManager.hh"
 #include "../CallbackStack.hh"
@@ -18,6 +19,7 @@ struct AnchorMode
         Bottom  = 1 << 3,
         Left    = 1 << 4,
         Right   = 1 << 5,
+        Default = Left | Right | Top,
         All     = Left | Right | Top | Bottom
     };
 };
@@ -52,27 +54,23 @@ class UIRoot;
 class UIControl
 {
     friend class UIRoot;
-    
-    vec4 origColor;             /* Original color of the control.                               */
-    vec2 origSize;              /* Original size                                                */
-    vec2 origPosition;          /* Original position                                            */
 
     bool isFocused;             /* Is this control in focus now?                                */
 
+    vec2 origPosition, origSize;
+
+    UIRoot* root;               /* Root of this control. Also root for children too.            */
+    UIControl* parent;          /* Parent control of this control                               */
+    
 public:
     vec2 position;              /* Position of the element relative to container top-left       */
     vec2 size;                  /* Size of the element, double axis anchoring will edit this    */
     vec2 margin;                /* Margin from container                                        */
     vec2 padding;               /* Padding for elements inside this control                     */
-    
-    vec4 color;                 /* Color of the control                                         */
-    vec4 hoverColor;            /* Hover color of the control                                   */
-    vec4 clickColor;            /* Click color of the control                                   */
 
     uint32_t cursor;            /* Cursor style when this control is hovered over with mouse.   */
 
     uint32_t anchor;            /* Anchoring properties, used by layout engine                  */
-    UIControl* parent;          /* Parent control of this control                               */
     UIEvents* events;           /* Event list for this control                                  */
     
     // Layer<UIControl*>* layer;/* UI layer that this control resides in                        */
@@ -82,20 +80,32 @@ public:
     Material* material;         /* Material to render this control.                             */
                                 /* If nullptr, RenderContext will assign a default one.         */
     bool focusable;             /* Is this control focusable? (spoilers, most of them are not)  */
-    UIRoot* root;               /* Root of this control. Also root for children too.            */
-    
-    UIControl(float x, float y, float w, float h, vec4 color);
-    UIControl(vec2 position, vec2 size, vec4 color);
-    UIControl(vec4 pos_size, vec4 color);
+
+    // Children controls contained within this control
+    std::vector<UIControl*> controls;
+
+    UIControl(float x, float y, float w, float h);
+    UIControl(vec2 position, vec2 size);
+    UIControl(vec4 pos_size);
 
     virtual ~UIControl();
     
     vec2 GetOriginalSize();
     vec2 GetOriginalPosition();
-
+    /*
     vec4 GetOriginalColor();
+    */
 
     vec2 GetRelativePosition(vec2 abs);
+
+    virtual void AddControl(UIControl* control);
+    virtual void RemoveControl(UIControl* control);
+
+    // TODO: For gods sake please optimize this
+    UIRoot* GetRoot();
+    
+    // Get theme used by this UI context
+    UITheme* GetTheme();
 
     bool IsFocused();
     
@@ -107,8 +117,10 @@ public:
 
     virtual void ProcessEvents();
 
-    virtual void Render(RenderContext& context) = 0;
+    virtual void Render(RenderContext& context);
 
+    /*
     virtual void SetRoot(UIRoot* root);
-    virtual void ClearRoot();
+    virtual void ClearRoot()
+    */
 };

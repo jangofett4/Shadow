@@ -144,6 +144,8 @@ void Game::Start()
     {
         auto start_time = Time::now();
 
+        glClearColor(1, 1, 1, 1);
+        
         // Clear color & depth buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

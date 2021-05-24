@@ -3,7 +3,7 @@
 #include <iostream>
 
 UITextBox::UITextBox(vec2 position, vec2 size, GlyphSet* font)
-    : UIControl(position, size, vec4(0.5, 0.5, 0.5, 0.9)), indexPos(0), index(0), line(0)
+    : UIControl(position, size), indexPos(0), index(0), line(0)
 {
     this->font = font;
     cursor = CursorMode::IBeam;
@@ -80,8 +80,9 @@ void UITextBox::UpdateMetrics()
 
 void UITextBox::Render(RenderContext& context)
 {
-    context.RenderUIQuad(position, size, 0, color, material);
+    auto color = IsFocused() ? GetTheme()->SecondaryAlt() : GetTheme()->Secondary();
+    context.RenderUIQuad(vec2(position.x, position.y + size.y - 2), vec2(size.x, 2), 0, color, material);
     if (IsFocused())
-        context.RenderUIQuad(vec2(position.x + indexPos, position.y + 4), vec2(1, size.y - 6), 0, vec4(1), material);
-    context.RenderUIText(value, vec2(position.x + padding.x, position.y + (size.y / 1.5)), font, vec4(1), material);
+        context.RenderUIQuad(vec2(position.x + indexPos, position.y + 4), vec2(1, size.y - 12), 0, GetTheme()->Secondary(), material);
+    context.RenderUIText(value, vec2(position.x + padding.x, position.y + (size.y / 1.5)), font, GetTheme()->OnSurface(), material);
 }

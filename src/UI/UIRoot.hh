@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "UIControl.hh"
+#include "UITheme.hh"
 #include "../RenderContext.hh"
 #include "../Components/Renderer.hh"
 
@@ -18,6 +19,7 @@ class UIRoot : public Renderer, public ShouldUpdate
 
 public:
     virtual const std::string Name();
+    UITheme* Theme;
 
     UIRoot();
     virtual ~UIRoot();

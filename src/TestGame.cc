@@ -19,8 +19,8 @@
 #include "UserScripts/CameraFreeLook.cc"
 */
 
-#define Width   1280
-#define Height  720
+#define Width   300
+#define Height  400
 
 int main()
 {
