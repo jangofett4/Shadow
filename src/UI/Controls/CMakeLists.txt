@@ -8,9 +8,10 @@ LIST(APPEND SRC
     ${PWD}/UITextBox.cc
     ${PWD}/UIStack.cc
     ${PWD}/UIProgressBar.cc
+    ${PWD}/UIBarGraph.cc
     # Made listbox into a template class, this is not needed
     # ${PWD}/UIListBox.cc
     # TODO: these two need special attention, fix them
     # ${PWD}/UISplitHorizontal.cc
-    # ${PWD}/UISplitVertical.cc
+    ${PWD}/UISplitVertical.cc
 )

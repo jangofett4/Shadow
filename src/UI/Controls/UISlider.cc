@@ -6,8 +6,6 @@ UISlider::UISlider(vec2 position, float length)
     focusable = true;
     cursor = CursorMode::Hand;
 
-    anchor = AnchorMode::Left | AnchorMode::Right | AnchorMode::Top;
-
     events->MouseLeftHoldEvent.Subscribe([&](vec2* pos){
         value = (GetRelativePosition(*pos).x / size.x) * 100;
         _events.OnChangeEvent.CallAll(&value);

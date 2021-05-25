@@ -12,6 +12,7 @@
 #include "UI/Controls/UISlider.hh"
 #include "UI/Controls/UIProgressBar.hh"
 #include "UI/Controls/UIListBox.hh"
+#include "UI/Controls/UIBarGraph.hh"
 
 #include "Components.hh"
 #include "Game.hh"
@@ -21,7 +22,7 @@
 #include "UserScripts/CameraFreeLook.cc"
 */
 
-#define Width   300
+#define Width   600
 #define Height  400
 
 int main()
@@ -48,9 +49,23 @@ int main()
     {
         auto uiobj = new GameObject("ui");
         auto uiroot = new UIRoot();
-        auto window = new UIWindow(vec2(50, 50), vec2(200, 300));
-        window->anchor = AnchorMode::Left | AnchorMode::Right | AnchorMode::Top;
+        auto window = new UIWindow(vec2(0, 0), vec2(600, 400));
+        auto split = new UISplitVertical();
+        window->AddControl(split);
 
+        auto stack_left = new UIStack();
+        split->AddControl(stack_left, VerticalSplitSide::Left);
+
+        stack_left->AddControl(new UILabel("Enter Text:", vec2(), font));
+        stack_left->AddControl(new UITextBox(vec2(), vec2(24), font));
+
+        auto stack_bottom = new UIStack();
+        split->AddControl(stack_bottom, VerticalSplitSide::Right);
+
+        stack_bottom->AddControl(new UILabel("Enter Text:", vec2(), font));
+        stack_bottom->AddControl(new UITextBox(vec2(), vec2(24), font));
+        
+        /*
         {
             auto stack = new UIStack();
             auto label = new UILabel("Slider is: 0%", vec2(), font);
@@ -103,8 +118,15 @@ int main()
                     list->RemoveAt(selected);
             });
 
+            auto graph = new UIBarGraph(vec2(), vec2(60), font);
+            graph->data.push_back(100);
+            graph->data.push_back(50);
+            graph->data.push_back(25);
+            stack->AddControl(graph);
+
             window->AddControl(stack);
         }
+        */
 
         uiroot->SetRoot(window);
         uiobj->AddComponent(uiroot);

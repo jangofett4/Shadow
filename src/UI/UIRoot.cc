@@ -31,8 +31,8 @@ void UIRoot::Render(RenderContext& context)
 {
     if (!root)
         return;
-    root->UpdateLayout();   // Update control layout
-    root->Render(context);  // Root should handle rest
+    root->UpdateLayout();       // Update control layout
+    root->Render(context);      // Root should handle rest
     // layerManager.RenderBackward(context);
 }
 

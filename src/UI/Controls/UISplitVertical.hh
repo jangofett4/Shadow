@@ -10,16 +10,14 @@ enum class VerticalSplitSide
 
 class UISplitVertical : public UIControl
 {
-public:
+    std::vector<VerticalSplitSide> sides;
 
+public:
     UISplitVertical();
 
-    void Render(RenderContext& context);
+    void AddControl(UIControl* control);
+    void AddControl(UIControl* control, VerticalSplitSide side);
 
     void UpdateLayout();
-    void UpdateLayout(vec2 parentPos, vec2 parentSize);
-    void ProcessEvents();
-
-    void SetRoot(UIRoot* root);
-    void ClearRoot();
+    //void UpdateLayout(vec2 parentPos, vec2 parentSize);
 };

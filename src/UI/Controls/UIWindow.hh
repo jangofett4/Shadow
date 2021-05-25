@@ -6,7 +6,6 @@ class UIWindow : public UIControl
 {
 public:
     UIWindow(vec2 position, vec2 size);
-    ~UIWindow();
 
     void Render(RenderContext& context);
 };

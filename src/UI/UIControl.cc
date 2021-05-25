@@ -40,7 +40,7 @@ bool UIEvents::GetState(std::string state)
 }
 
 UIControl::UIControl(float x, float y, float w, float h)
-    :   position(x, y), size(w, h), margin(8.0f), padding(8.0f),
+    :   position(x, y), size(w, h), margin(4.0f), padding(4.0f),
         anchor(AnchorMode::Default),
         parent(nullptr), events(new UIEvents()), focusable(false),
         isFocused(false), material(nullptr), cursor(CursorMode::Default), controls()
@@ -50,7 +50,7 @@ UIControl::UIControl(float x, float y, float w, float h)
 }
 
 UIControl::UIControl(vec2 position, vec2 size)
-    :   position(position), size(size), margin(8.0f), padding(8.0f),
+    :   position(position), size(size), margin(4.0f), padding(4.0f),
         anchor(AnchorMode::Default),
         parent(nullptr), events(new UIEvents()), focusable(false),
         isFocused(false), material(nullptr), cursor(CursorMode::Default), controls()
@@ -60,7 +60,7 @@ UIControl::UIControl(vec2 position, vec2 size)
 }
 
 UIControl::UIControl(vec4 pos_size)
-    :   position(pos_size.x, pos_size.y), size(pos_size.z, pos_size.w), margin(8.0f), padding(8.0f),
+    :   position(pos_size.x, pos_size.y), size(pos_size.z, pos_size.w), margin(4.0f), padding(4.0f),
         anchor(AnchorMode::Default),
         parent(nullptr), events(new UIEvents()), focusable(false),
         isFocused(false), material(nullptr), cursor(CursorMode::Default), controls()
@@ -118,7 +118,7 @@ void UIControl::Render(RenderContext& context)
         (*it)->Render(context);
 }
 
-void UIControl::UpdateLayout()
+void UIControl::UpdateSelfLayout()
 {
     auto newPosition = origPosition;
     auto newSize = origSize;
@@ -161,9 +161,18 @@ void UIControl::UpdateLayout()
             size = newSize;
         }
     }
+}
 
+void UIControl::UpdateChildLayout()
+{
     for (auto it = controls.begin(); it != controls.end(); it++)
         (*it)->UpdateLayout();
+}
+
+void UIControl::UpdateLayout()
+{
+    UpdateSelfLayout();
+    UpdateChildLayout();
 }
 
 /*
@@ -178,50 +187,20 @@ void UIControl::ClearRoot()
 }
 */
 
+/*
 void UIControl::UpdateLayout(vec2 parentPosition, vec2 parentSize)
 {
-    auto newPosition = origPosition;
-    auto newSize = origSize;
-
-    if (!parent)
-    {
-        position = newPosition;
-        size = newSize;
-    }
-    else
-    {
-        auto offset = parentPosition;
-
-        if (anchor & AnchorMode::Normal)
-        {
-            position = newPosition + offset + margin;
-            size = newSize;
-        }
-        else
-        {
-            if (anchor & AnchorMode::Left)
-            {
-                newPosition.x = margin.x + parent->padding.x;
-                if (anchor & AnchorMode::Right)
-                    newSize.x = parentSize.x - (2 * margin.x) - (2 * parent->padding.x);
-            }
-            else if (anchor & AnchorMode::Right)
-                newPosition.x = parentSize.x - margin.x - newSize.x - (2 * parent->padding.x);
-
-            if (anchor & AnchorMode::Top)
-            {
-                newPosition.y = margin.y + parent->padding.y;
-                if (anchor & AnchorMode::Bottom)
-                    newSize.y = parentSize.y - (2 * margin.y) - (2 * parent->padding.y);
-            }
-            else if (anchor & AnchorMode::Bottom)
-                newPosition.y = parentSize.y - margin.y - newSize.y - (2 * parent->padding.y);
-
-            position = newPosition + offset;
-            size = newSize;
-        }
-    }
+    // Dirty hack to force layout engine to use custom parent position
+    // Actually is faster than calculating positions from scratch
+    auto pos_save = parent->position;
+    auto size_save = parent->size;
+    parent->position = parentPosition;
+    parent->size = parentSize;
+    UpdateSelfLayout();
+    parent->position = pos_save;
+    parent->size = size_save;
 }
+*/
 
 bool inbounds_2d(float x, float y, vec2 position, vec2 size)
 {

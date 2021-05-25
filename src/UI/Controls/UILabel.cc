@@ -11,5 +11,5 @@ UILabel::UILabel(std::string label, vec2 position, GlyphSet* font)
 
 void UILabel::Render(RenderContext& context)
 {
-    context.RenderUIText(label, vec2(position.x, position.y + (size.y / 2)), font, GetTheme()->OnSurface(), material);
+    context.RenderUIText(label, vec2(position.x, position.y + (size.y / 2)), 0, font, GetTheme()->OnSurface(), material);
 }

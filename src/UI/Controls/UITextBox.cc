@@ -25,7 +25,6 @@ UITextBox::UITextBox(vec2 position, vec2 size, GlyphSet* font)
 
     events->SetupKeyPressEvent([&](int32_t* codeptr){
         auto code = *codeptr;
-        std::cout << code << " ";
         if (IsFocused())
         {
             if (code == 259 && index > 0) // Backspace
@@ -100,5 +99,5 @@ void UITextBox::Render(RenderContext& context)
     context.RenderUIQuad(vec2(position.x, position.y + size.y - 2), vec2(size.x, 2), 0, color, material);
     if (IsFocused())
         context.RenderUIQuad(vec2(position.x + padding.x + indexPos, position.y + 4), vec2(1, size.y - 12), 0, GetTheme()->Secondary(), material);
-    context.RenderUIText(value, vec2(position.x + padding.x, position.y + (size.y / 1.5)), font, GetTheme()->OnSurface(), material);
+    context.RenderUIText(value, vec2(position.x + padding.x, position.y + (size.y / 1.5)), 0, font, GetTheme()->OnSurface(), material);
 }

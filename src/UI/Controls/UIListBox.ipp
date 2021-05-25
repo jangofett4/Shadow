@@ -77,7 +77,7 @@ void UIListBox<T>::Render(RenderContext& context)
     for (auto it = items.begin(); it != items.end(); it++)
     {
         auto height = position.y + i * (16 + padding.y);
-        context.RenderUIText((*it), vec2(position.x + padding.x, height + 8), font, GetTheme()->OnSecondary(), material);
+        context.RenderUIText((*it), vec2(position.x + padding.x, height + 8), 0, font, GetTheme()->OnSecondary(), material);
         i++;
     }
 }

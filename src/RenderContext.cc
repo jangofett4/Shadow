@@ -4,6 +4,7 @@
 #include "Graphics/Shaders/UIShader.hh"
 
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 static vec2 quad_vbo_texcoords[] = {
@@ -18,6 +19,13 @@ static vec2 quad_vbo_verts[] = {
 
 static vec2 circle_vbo_verts[] = {
     #include "Circle360.inc"
+};
+
+static vec2 rect_vbo_verts[] = {
+    vec2(0, 0), vec2(0, 1),
+    vec2(0, 1), vec2(1, 1),
+    vec2(1, 1), vec2(1, 0),
+    vec2(1, 0), vec2(0, 0)
 };
 
 RenderContext::RenderContext(GameTime* time) : time(time)
@@ -58,6 +66,17 @@ RenderContext::RenderContext(GameTime* time) : time(time)
 
     glBindBuffer(GL_ARRAY_BUFFER, circle_vbo_position);
     glBufferData(GL_ARRAY_BUFFER, 361 * sizeof(vec2), &circle_vbo_verts[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
+    glEnableVertexAttribArray(0);
+
+    /* Rectangle VAO & VBO */
+    glGenVertexArrays(1, &rect_vao);
+    glBindVertexArray(rect_vao);
+
+    glGenBuffers(1, &rect_vbo_position);
+
+    glBindBuffer(GL_ARRAY_BUFFER, rect_vbo_position);
+    glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(vec2), &rect_vbo_verts[0], GL_STATIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
     glEnableVertexAttribArray(0);
 
@@ -176,18 +195,24 @@ mat4 RenderContext::ModelViewProjection2D(vec2 position, vec2 size, float rotati
 
 mat4 RenderContext::ModelScreenProjection(Transform* transform)
 {
+    auto halfsize = transform->Scale / 2.0f;
     mat4 model(1.0f);
     model = glm::translate(model, transform->Position);
+    model = glm::translate(model, vec3(halfsize.x, halfsize.y, 0));
     model = glm::rotate(model, glm::radians(transform->Rotation.x), vec3(.0f, .0f, 1.f));
+    model = glm::translate(model, vec3(-halfsize.x, -halfsize.y, 0));
     model = glm::scale(model, transform->Scale);
     return screen * model;
 }
 
 mat4 RenderContext::ModelScreenProjection(vec2 position, vec2 size, float rotation)
 {
+    auto halfsize = size / 2.0f;
     mat4 model(1.0f);
     model = glm::translate(model, vec3(position.x, position.y, 0));
+    model = glm::translate(model, vec3(halfsize.x, halfsize.y, 0));
     model = glm::rotate(model, glm::radians(rotation), vec3(0, 0, 1));
+    model = glm::translate(model, vec3(-halfsize.x, -halfsize.y, 0));
     model = glm::scale(model, vec3(size.x, size.y, 1));
     return screen * model;
 }
@@ -257,15 +282,29 @@ void RenderContext::RenderUICircle(vec2 position, float radius, vec4 color, Mate
     RenderArrays(361, GL_TRIANGLE_FAN);
 }
 
-void RenderContext::RenderUIText(std::wstring string, vec2 position, GlyphSet* font, vec4 color, Material* material)
+void RenderContext::RenderUIRect(vec2 position, vec2 size, float rotation, GLfloat thickness, vec4 color, Material* material)
 {
+    if (!material)
+        material = uiMaterial;
+    material->Value("color", color);
+    material->Value("modelViewProj", ModelScreenProjection(position, size, rotation));
+    material->Value("deltaTime", time->Delta);
+    material->Value("time", time->GetSecondsSinceStart());
+    SetupTriple(material, rect_vao);
+    glLineWidth(thickness);
+    RenderArrays(8, GL_LINES);
+}
+
+void RenderContext::RenderUIText(std::wstring string, vec2 position, float rotation, GlyphSet* font, vec4 color, Material* material)
+{
+    // TODO: use custom material if passed
     if (string.empty())
         return;
     auto gen = font->Text(string);
     
     UseProgram(textMaterial);
     
-    textMaterial->Value("modelViewProj", screen);   // No transformation for model itself.
+    textMaterial->Value("modelViewProj", ModelScreenProjection(vec2(0), vec2(1), rotation));   // No transformation for model itself.
     // textMaterial->Value("fsCharTexture", (Texture*)nullptr);
     textMaterial->Value("fsTextColor", color);
     auto samplerUniform = textMaterial->GetUniform("fsCharTexture");
@@ -296,9 +335,9 @@ void RenderContext::RenderUIText(std::wstring string, vec2 position, GlyphSet* f
     }
 }
 
-void RenderContext::RenderUIText(std::string string, vec2 position, GlyphSet* font, vec4 color, Material* material)
+void RenderContext::RenderUIText(std::string string, vec2 position, float rotation, GlyphSet* font, vec4 color, Material* material)
 {
-    RenderUIText(std::wstring(string.begin(), string.end()), position, font, color, material);
+    RenderUIText(std::wstring(string.begin(), string.end()), position, rotation, font, color, material);
 }
 
 void RenderContext::RenderArrays(size_t count)

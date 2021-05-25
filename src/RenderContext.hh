@@ -21,8 +21,11 @@ class RenderContext
     // Generic Quad VAO & VBO, useful for textured 2D rendering
     GLuint quad_textured_vao, quad_textured_vbo_position, quad_textured_vbo_uv;
 
-    // Generic Cricle VAO & VBO, useful for 2D UI rendering
+    // Generic Circle VAO & VBO, useful for 2D UI
     GLuint circle_vao, circle_vbo_position;
+
+    // Generic rectangle VAO & VBO, useful for 2D UI
+    GLuint rect_vao, rect_vbo_position;
 
     // Generic text shader & material
     Material* textMaterial; Shader* textShader;
@@ -67,8 +70,10 @@ public:
     
     void RenderUIQuad(vec2 position, vec2 size, float rotation, vec4 color, Material* material);
     void RenderUICircle(vec2 positon, float radius, vec4 color, Material* material);
-    void RenderUIText(std::wstring string, vec2 position, GlyphSet* font, vec4 color, Material* material);
-    void RenderUIText(std::string string, vec2 position, GlyphSet* font, vec4 color, Material* material);
+    void RenderUIRect(vec2 position, vec2 size, float rotation, GLfloat thickness, vec4 color, Material* material);
+
+    void RenderUIText(std::wstring string, vec2 position, float rotation, GlyphSet* font, vec4 color, Material* material);
+    void RenderUIText(std::string string, vec2 position, float rotation, GlyphSet* font, vec4 color, Material* material);
 
     void RenderArrays(size_t count);
     void RenderArrays(size_t count, GLenum mode);

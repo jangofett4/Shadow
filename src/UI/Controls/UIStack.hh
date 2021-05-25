@@ -8,5 +8,5 @@ public:
     UIStack();
 
     void UpdateLayout();
-    void UpdateLayout(vec2 parentPos, vec2 parentSize);
+    //void UpdateLayout(vec2 parentPos, vec2 parentSize);
 };

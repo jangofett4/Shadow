@@ -109,11 +109,14 @@ public:
 
     bool IsFocused();
     
+    void UpdateSelfLayout();
+    void UpdateChildLayout();
+    
     // Default layout engine, uses parent bounds if possible
     virtual void UpdateLayout();
 
     // Default layout engine, custom parent bounds are supplied
-    virtual void UpdateLayout(vec2 parentPos, vec2 parentSize);
+    // virtual void UpdateLayout(vec2 parentPos, vec2 parentSize);
 
     virtual void ProcessEvents();
 

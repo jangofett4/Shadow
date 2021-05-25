@@ -4,12 +4,7 @@ UIWindow::UIWindow(vec2 position, vec2 size)
     :   UIControl(position, size)
 {
     cursor = CursorMode::DontAffect;
-}
-
-UIWindow::~UIWindow()
-{
-    for (auto it = controls.begin(); it != controls.end(); it++)
-        delete (*it);
+    margin = vec2();
 }
 
 void UIWindow::Render(RenderContext& context)
