@@ -10,6 +10,8 @@
 #include "UI/Controls/UITextBox.hh"
 #include "UI/Controls/UIToggleButton.hh"
 #include "UI/Controls/UISlider.hh"
+#include "UI/Controls/UIProgressBar.hh"
+#include "UI/Controls/UIListBox.hh"
 
 #include "Components.hh"
 #include "Game.hh"
@@ -53,12 +55,13 @@ int main()
             auto stack = new UIStack();
             auto label = new UILabel("Slider is: 0%", vec2(), font);
             auto slider = new UISlider(vec2(), 25);
-            slider->_events.OnChangeEvent.Subscribe([label](int* value) {
+            auto progress = new UIProgressBar(vec2(), 0);
+            slider->_events.OnChangeEvent.Subscribe([label, progress](int* value) {
                 label->label = "Slider is: " + std::to_string(*value) + "%";
+                progress->SetProgress(*value);
             });
             stack->AddControl(slider);
             stack->AddControl(label);
-            stack->AddControl(new UITextBox(vec2(), vec2(25), font));
 
             auto toggle1 = new UIToggleButton("State: false", vec2(), vec2(25), font);
             toggle1->_events.OnStateChange.Subscribe([toggle1](bool* state) {
@@ -73,6 +76,32 @@ int main()
 
             stack->AddControl(toggle1);
             stack->AddControl(toggle2);
+
+            stack->AddControl(progress);
+
+            auto textbox = new UITextBox(vec2(), vec2(25), font);
+            auto additembutton = new UIButton("Add to List", vec2(), vec2(25), font);
+            auto removeitembutton = new UIButton("Remove from List", vec2(), vec2(25), font);
+
+            stack->AddControl(textbox);
+            stack->AddControl(additembutton);
+            stack->AddControl(removeitembutton);
+
+            auto list = new UIListBox<std::wstring>(vec2(), vec2(0, 128), font);
+            list->AddItem(L"List element 1");
+            list->AddItem(L"List element 2");
+            list->AddItem(L"List element 3");
+            stack->AddControl(list);
+
+            additembutton->events->MouseClickEvent.Subscribe([textbox, list](vec2*){
+                list->AddItem(textbox->GetValue());
+            });
+
+            removeitembutton->events->MouseClickEvent.Subscribe([list](vec2*){
+                auto selected = list->GetSelectedIndex();
+                if (selected >= 0)
+                    list->RemoveAt(selected);
+            });
 
             window->AddControl(stack);
         }

@@ -5,9 +5,10 @@
 class UIProgressBar : public UIControl
 {
     int progress;
-
+    float progressWidth;
+    
 public:
-    UISlider(vec2 position, float length);
+    UIProgressBar(vec2 position, float length);
 
     int GetProgress();
     void SetProgress(int progress);

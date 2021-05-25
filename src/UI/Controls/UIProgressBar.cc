@@ -1,47 +1,45 @@
 #include "UIProgressBar.hh"
 
 UIProgressBar::UIProgressBar(vec2 position, float length)
-    : UIControl(position, vec2(length, 16), vec4(0.5, 0.5, 0.5, 0.9)), value(0)
+    : UIControl(position, vec2(length, 16)), progress(0), progressWidth(0)
 {
-    hoverColor = vec4(0.6, 0.6, 0.6, 0.9);
-    clickColor = vec4(0.7, 0.7, 0.7, 0.9);
-    focusable = true;
-    cursor = CursorMode::Hand;
-
-    anchor = AnchorMode::Left | AnchorMode::Right | AnchorMode::Top;
-
-    events->MouseHoverEvent.Subscribe([&](auto){
-        handleColor = hoverColor;
-    });
-
-    events->MouseLeftHoldEvent.Subscribe([&](vec2* pos){
-        handleColor = clickColor;
-        value = (GetRelativePosition(*pos).x / size.x) * 100;
-        _events.OnChangeEvent.CallAll(&value);
-    });
-    
-    events->MouseExitEvent.Subscribe([&](auto){
-        handleColor = GetOriginalColor();
-    });
 }
 
-int UISlider::GetValue()
+int UIProgressBar::GetProgress()
 {
-    return value;
+    return progress;
 }
 
-void UISlider::SetValue(int newval)
+void UIProgressBar::SetProgress(int newprogress)
 {
-    if (newval > 100)
-        value = 100;
-    else if (newval < 0)
-        value = 0;
+    if (newprogress > 100)
+        progress = 100;
+    else if (newprogress < 0)
+        progress = 0;
     else
-        value = newval;
+        progress = newprogress;
+    progressWidth = (progress / 100.0) * size.x;
 }
 
-void UISlider::Render(RenderContext& context)
+bool UIProgressBar::AddProgress(int value)
 {
-    context.RenderUIQuad(position, vec2(size.x, 6), 0, color, material);
-    context.RenderUICircle(position + vec2((value / 100.0f) * size.x, 0), 8, handleColor, material);
+    auto newprogress = progress + value;
+    auto result = true;
+    if (newprogress > 100)
+        progress = 100;
+    else if (newprogress < 0)
+        progress = 0;
+    else
+    {
+        progress = newprogress;
+        result = false;
+    }
+    progressWidth = (progress / 100) * size.x;
+    return false;
+}
+
+void UIProgressBar::Render(RenderContext& context)
+{
+    context.RenderUIQuad(position, size, 0, GetTheme()->SecondaryAlt(), material);
+    context.RenderUIQuad(position, vec2(progressWidth, size.y), 0, GetTheme()->Secondary(), material);
 }

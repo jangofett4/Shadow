@@ -60,8 +60,7 @@ size_t GlyphSet::Length(std::wstring string, size_t to)
 }
 
 FontFace::FontFace(FT_Face face) : face(face)
-{
-}
+{ }
 
 FontFace::~FontFace()
 {

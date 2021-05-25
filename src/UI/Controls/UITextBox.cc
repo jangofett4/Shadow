@@ -28,24 +28,40 @@ UITextBox::UITextBox(vec2 position, vec2 size, GlyphSet* font)
         std::cout << code << " ";
         if (IsFocused())
         {
-            if (code == 259 && index > 0)
+            if (code == 259 && index > 0) // Backspace
             {
                 value = value.erase(--index, 1);
                 UpdateMetrics();
             }
-            else if (code == 263 && index > 0)
+            else if (code == 263 && index > 0) // Left rrow
             {
                 index--;
                 UpdateMetrics();
             }
-            else if (code == 262 && index < value.size())
+            else if (code == 262 && index < value.size()) // Right arrow
             {
                 index++;
                 UpdateMetrics();
             }
+            else if (code == 268) // Home
+            {
+                index = 0;
+                UpdateMetrics();
+            }
+            else if (code == 269) // End
+            {
+                index = value.size();
+                UpdateMetrics();
+            }
+
             // 265 for up, 264 for down
         }
     });
+}
+
+std::wstring UITextBox::GetValue()
+{
+    return value;
 }
 
 void UITextBox::SetValue(std::wstring str)
@@ -75,7 +91,7 @@ void UITextBox::Insert(std::wstring str, size_t at)
 
 void UITextBox::UpdateMetrics()
 {
-    indexPos = this->font->Length(value, index + 1);
+    indexPos = this->font->Length(value, index);
 }
 
 void UITextBox::Render(RenderContext& context)
@@ -83,6 +99,6 @@ void UITextBox::Render(RenderContext& context)
     auto color = IsFocused() ? GetTheme()->SecondaryAlt() : GetTheme()->Secondary();
     context.RenderUIQuad(vec2(position.x, position.y + size.y - 2), vec2(size.x, 2), 0, color, material);
     if (IsFocused())
-        context.RenderUIQuad(vec2(position.x + indexPos, position.y + 4), vec2(1, size.y - 12), 0, GetTheme()->Secondary(), material);
+        context.RenderUIQuad(vec2(position.x + padding.x + indexPos, position.y + 4), vec2(1, size.y - 12), 0, GetTheme()->Secondary(), material);
     context.RenderUIText(value, vec2(position.x + padding.x, position.y + (size.y / 1.5)), font, GetTheme()->OnSurface(), material);
 }
