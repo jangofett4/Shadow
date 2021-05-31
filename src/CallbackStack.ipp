@@ -17,3 +17,15 @@ void CallbackStack<T>::Subscribe(std::function<void(T*)> callback)
 {
     callbacks.push_back(callback);
 }
+
+template<typename T>
+void CallbackStack<T>::operator()(T* arg)
+{
+    CallAll(arg);
+}
+
+template<typename T>
+void CallbackStack<T>::operator()(std::function<void(T*)> callback)
+{
+    Subscribe(callback);
+}

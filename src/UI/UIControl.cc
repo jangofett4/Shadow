@@ -3,6 +3,8 @@
 
 #include "../Input.hh"
 
+CallbackStack<char> StaticHelper = CallbackStack<char>();
+
 UIEvents::UIEvents()
     :   MouseHoverEvent(),
         MouseExitEvent(),
@@ -39,10 +41,11 @@ bool UIEvents::GetState(std::string state)
     return it->second;
 }
 
+// TODO: 2 of these contructors are actually never used, maybe get rid of them?
 UIControl::UIControl(float x, float y, float w, float h)
     :   position(x, y), size(w, h), margin(4.0f), padding(4.0f),
         anchor(AnchorMode::Default),
-        parent(nullptr), events(new UIEvents()), focusable(false),
+        parent(nullptr), events(new UIEvents()), focusable(false), layer(nullptr), root(nullptr), enabled(true), visible(true),
         isFocused(false), material(nullptr), cursor(CursorMode::Default), controls()
 {
     origPosition = position;
@@ -52,7 +55,7 @@ UIControl::UIControl(float x, float y, float w, float h)
 UIControl::UIControl(vec2 position, vec2 size)
     :   position(position), size(size), margin(4.0f), padding(4.0f),
         anchor(AnchorMode::Default),
-        parent(nullptr), events(new UIEvents()), focusable(false),
+        parent(nullptr), events(new UIEvents()), focusable(false), layer(nullptr), root(nullptr), enabled(true), visible(true),
         isFocused(false), material(nullptr), cursor(CursorMode::Default), controls()
 {
     origPosition = position;
@@ -62,7 +65,7 @@ UIControl::UIControl(vec2 position, vec2 size)
 UIControl::UIControl(vec4 pos_size)
     :   position(pos_size.x, pos_size.y), size(pos_size.z, pos_size.w), margin(4.0f), padding(4.0f),
         anchor(AnchorMode::Default),
-        parent(nullptr), events(new UIEvents()), focusable(false),
+        parent(nullptr), events(new UIEvents()), focusable(false), layer(nullptr), root(nullptr), enabled(true), visible(true),
         isFocused(false), material(nullptr), cursor(CursorMode::Default), controls()
 {
     origPosition = position;
@@ -74,6 +77,13 @@ UIControl::~UIControl()
     delete events;
     for (auto it = controls.begin(); it != controls.end(); it++)
         delete *it;
+    /*
+    if (UIControl::Layers::Default)
+    {
+        delete UIControl::Layers::Default;
+        delete UIControl::Layers::Popup;
+    }
+    */
 }
 
 vec2 UIControl::GetOriginalSize() { return origSize; }
@@ -98,9 +108,32 @@ void UIControl::RemoveControl(UIControl* control)
     controls.erase(it);
 }
 
+void UIControl::SetLayer(Layer<UIControl*>* layer)
+{
+    layer->AddObject(this);
+    // this->layer = layer;
+    for (auto it = controls.begin(); it != controls.end(); it++)
+        (*it)->SetLayer(layer);
+}
+
+void UIControl::Start()
+{
+    for (auto it = controls.begin(); it != controls.end(); it++)
+        (*it)->Start();
+}
+
+void UIControl::InheritRoot()
+{
+    for (auto it = controls.begin(); it != controls.end(); it++)
+    {
+        (*it)->root = root;
+        (*it)->InheritRoot();
+    }
+}
+
 UIRoot* UIControl::GetRoot()
 {
-    if (!parent)
+    if (!parent || root)
         return root;
     return parent->GetRoot();
 }
@@ -112,22 +145,16 @@ UITheme* UIControl::GetTheme()
 
 bool UIControl::IsFocused() { return isFocused; }
 
-void UIControl::Render(RenderContext& context)
-{
-    for (auto it = controls.begin(); it != controls.end(); it++)
-        (*it)->Render(context);
-}
+void UIControl::Render(RenderContext& context) { }
 
 void UIControl::UpdateSelfLayout()
 {
     auto newPosition = origPosition;
     auto newSize = origSize;
 
-    if (!parent)
-    {
-        position = newPosition;
-        size = newSize;
-    }
+    // Absoulte position
+    if (!parent || anchor & AnchorMode::Float)
+        return;
     else
     {
         auto offset = parent->position;
@@ -175,33 +202,6 @@ void UIControl::UpdateLayout()
     UpdateChildLayout();
 }
 
-/*
-void UIControl::SetRoot(UIRoot* root)
-{
-    this->root = root;
-}
-
-void UIControl::ClearRoot()
-{
-    root = nullptr;
-}
-*/
-
-/*
-void UIControl::UpdateLayout(vec2 parentPosition, vec2 parentSize)
-{
-    // Dirty hack to force layout engine to use custom parent position
-    // Actually is faster than calculating positions from scratch
-    auto pos_save = parent->position;
-    auto size_save = parent->size;
-    parent->position = parentPosition;
-    parent->size = parentSize;
-    UpdateSelfLayout();
-    parent->position = pos_save;
-    parent->size = size_save;
-}
-*/
-
 bool inbounds_2d(float x, float y, vec2 position, vec2 size)
 {
     auto bounds = position + size;
@@ -212,6 +212,9 @@ bool inbounds_2d(float x, float y, vec2 position, vec2 size)
 
 void UIControl::ProcessEvents()
 {
+    if (!visible || !enabled)
+        return;
+        
     auto mpX = Input::Mouse->GetMouseX();
     auto mpY = Input::Mouse->GetMouseY();
     auto mpClick = Input::Mouse->IsLMBClicked();    // Full click

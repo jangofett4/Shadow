@@ -1,9 +1,10 @@
 #include "UISplitVertical.hh"
 
 UISplitVertical::UISplitVertical()
-    :   UIControl(vec2(), vec2())
+    :   UIControl(vec2(), vec2()), sides()
 {
     anchor = AnchorMode::All;
+    margin = vec2();
 }
 
 void UISplitVertical::AddControl(UIControl* control)

@@ -13,15 +13,15 @@ void UIStack::UpdateLayout()
     UIControl::UpdateSelfLayout();
 
     int i = 0;
-    int sum = 0;
+    int sum = position.y + padding.y;
     auto posback = position;
 
     for (auto it = controls.begin(); it != controls.end(); it++, i++)
     {
         auto control = *it;
-        position.y += sum;
+        position.y = sum;
         control->UpdateLayout();
-        sum += control->GetOriginalSize().y + padding.y;
+        sum += control->GetOriginalSize().y + padding.y + control->margin.y;
     }
 
     position = posback;

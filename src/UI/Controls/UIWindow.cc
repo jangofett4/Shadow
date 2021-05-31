@@ -10,5 +10,5 @@ UIWindow::UIWindow(vec2 position, vec2 size)
 void UIWindow::Render(RenderContext& context)
 {
     context.RenderUIQuad(position, size, 0, GetTheme()->Background(), material);
-    UIControl::Render(context);
+    //UIControl::Render(context);
 }

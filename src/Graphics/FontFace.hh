@@ -26,6 +26,8 @@ class GlyphSet
     friend class FontFace;
 
     std::map<wchar_t, Glyph> glyphs;
+    Glyph qmark;
+    
 public:
     const size_t size;
 

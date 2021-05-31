@@ -4,6 +4,8 @@
 
 class UITextBox : public UIControl
 {
+    static Material* blink_material;
+    
     std::wstring value;
     std::wstring showSlice;
 

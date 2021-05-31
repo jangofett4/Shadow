@@ -19,9 +19,9 @@ UIListBox<T>::UIListBox(vec2 position, vec2 size, GlyphSet* font)
 
 
 template<typename T>
-void UIListBox<T>::AddItem(T item)
+void UIListBox<T>::AddItem(std::wstring text, T item)
 {
-    items.push_back(item);
+    items.push_back(std::make_pair(text, item));
 }
 
 template<typename T>
@@ -74,10 +74,11 @@ void UIListBox<T>::Render(RenderContext& context)
         context.RenderUIQuad(vec2(position.x, position.y + selected * (16 + padding.y) - 4), vec2(size.x, 16), 0, GetTheme()->SecondaryAlt(), material);
     
     size_t i = 0;
+    // FIXME: renders last-to-first somehow, fix it
     for (auto it = items.begin(); it != items.end(); it++)
     {
         auto height = position.y + i * (16 + padding.y);
-        context.RenderUIText((*it), vec2(position.x + padding.x, height + 8), 0, font, GetTheme()->OnSecondary(), material);
+        context.RenderUIText(it->first, vec2(position.x + padding.x, height + 8), 0, font, GetTheme()->OnSecondary(), material);
         i++;
     }
 }

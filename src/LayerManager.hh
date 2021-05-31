@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <string>
+#include <functional>
 
 #include "RenderContext.hh"
 
@@ -21,6 +22,7 @@ public:
     Layer(std::string);
 
     void Render(RenderContext& context);
+    void Render(RenderContext& context, std::function<bool(T)> predicate);
 
     void AddObject(T);
     void RemoveObject(T);
@@ -38,8 +40,11 @@ public:
     Layer<T>* AddLayer(std::string);
     Layer<T>* GetLayer(std::string);
 
-    void RenderForward(RenderContext&);
-    void RenderBackward(RenderContext&);
+    void RenderForward(RenderContext& context);
+    void RenderForward(RenderContext& context, std::function<bool(T)> predicate);
+
+    void RenderBackward(RenderContext& context);
+    void RenderBackward(RenderContext& context, std::function<bool(T)> predicate);
 };
 
 #include "LayerManager.ipp"

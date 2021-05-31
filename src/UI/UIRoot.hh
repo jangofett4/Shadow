@@ -6,6 +6,7 @@
 #include "UITheme.hh"
 #include "../RenderContext.hh"
 #include "../Components/Renderer.hh"
+#include "../LayerManager.hh"
 
 /* This is UI root component
  * It's responsible to mainly render all controls in it.
@@ -16,8 +17,14 @@ class UIRoot : public Renderer, public ShouldUpdate
 {
     UIControl* root;
     std::vector<UIControl*> focused;
+    LayerManager<UIControl*> layerManager;
 
 public:
+    struct {
+        Layer<UIControl*>* Default;
+        Layer<UIControl*>* Popup;
+    } Layers;
+
     virtual const std::string Name();
     UITheme* Theme;
 

@@ -27,12 +27,11 @@ GlyphSet::~GlyphSet()
 std::vector<Glyph> GlyphSet::Text(std::wstring string)
 {
     std::vector<Glyph> output;
-    auto qmark = glyphs.find('?');
     for (auto c : string)
     {
         auto found = glyphs.find(c);
         if (found == glyphs.end())
-            output.push_back(qmark->second);
+            output.push_back(qmark);
         else
             output.push_back(found->second);
     }
@@ -48,7 +47,6 @@ size_t GlyphSet::Length(std::wstring string)
 size_t GlyphSet::Length(std::wstring string, size_t to)
 {
     size_t len = 0;
-    auto qmark = glyphs.find('?');
     for (size_t i = 0; i < to && i < string.size(); i++)
     {
         auto c = string[i];
@@ -129,6 +127,9 @@ GlyphSet* FontFace::LoadSize(size_t height)
             }
         }
     }
+
+    auto qmark = set->glyphs.find('?');
+    set->qmark = (*qmark).second;
 
     return set;
 }

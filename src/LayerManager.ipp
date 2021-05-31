@@ -14,6 +14,14 @@ void Layer<T>::Render(RenderContext& context)
 }
 
 template<typename T>
+void Layer<T>::Render(RenderContext& context, std::function<bool(T)> predicate)
+{
+    for (auto it = objects.begin(); it != objects.end(); it++)
+        if (predicate((*it)))
+            (*it)->Render(context);
+}
+
+template<typename T>
 void Layer<T>::AddObject(T object)
 {
     if (object->layer)
@@ -25,9 +33,9 @@ void Layer<T>::AddObject(T object)
 template<typename T>
 void Layer<T>::RemoveObject(T object)
 {
-    objects.erase(
-        std::find(objects.begin(), objects.end(), object)
-    );
+    auto found = std::find(objects.begin(), objects.end(), object);
+    if (found != objects.end())
+        objects.erase(found);
 }
 
 template<typename T>
@@ -70,8 +78,22 @@ void LayerManager<T>::RenderForward(RenderContext& context)
 }
 
 template<typename T>
+void LayerManager<T>::RenderForward(RenderContext& context, std::function<bool(T)> predicate)
+{
+    for (auto it = layers.begin(); it != layers.end(); it++)
+        (*it)->Render(context, predicate);
+}
+
+template<typename T>
 void LayerManager<T>::RenderBackward(RenderContext& context)
 {
     for (auto it = layers.rbegin(); it != layers.rend(); it++)
         (*it)->Render(context);
+}
+
+template<typename T>
+void LayerManager<T>::RenderBackward(RenderContext& context, std::function<bool(T)> predicate)
+{
+    for (auto it = layers.rbegin(); it != layers.rend(); it++)
+        (*it)->Render(context, predicate);
 }

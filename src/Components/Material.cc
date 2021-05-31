@@ -106,6 +106,17 @@ void Material::ApplyUniform(Uniform* uniform)
     }
 }
 
+Material* Material::QuickMaterial(std::string vs, std::string fs)
+{
+    auto program = new Shader(vs, fs);
+    if (program->DidError)
+    {
+        delete program;
+        return nullptr;
+    }
+    return new Material(program);
+}
+
 void Material::Apply()
 {
     for (auto it = uniforms.begin(); it != uniforms.end(); it++)

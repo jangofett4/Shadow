@@ -2,12 +2,39 @@
 
 #include <iostream>
 
+std::string blink_vs = R"glsl(
+    #version 330 core
+    layout(location = 0) in vec2 vsPosition;
+
+    uniform mat4 modelViewProj;
+    uniform float time;
+
+    void main()
+    {
+        gl_Position = modelViewProj * vec4(vsPosition.xy, 1.0, 1.0);
+    }
+)glsl";
+
+std::string blink_fs = R"glsl(
+    #version 330 core
+    
+    out vec4 outColor;
+    uniform vec4 color;
+
+    uniform float time;
+
+    void main()
+    {
+        outColor = vec4(color.xyz, abs(cos(time * 2)));
+    }
+)glsl";
+
 UITextBox::UITextBox(vec2 position, vec2 size, GlyphSet* font)
-    : UIControl(position, size), indexPos(0), index(0), line(0)
+    : UIControl(position, size), font(font), indexPos(0), index(0), line(0)
 {
-    this->font = font;
+    if (!UITextBox::blink_material)
+        UITextBox::blink_material = Material::QuickMaterial(blink_vs, blink_fs);
     cursor = CursorMode::IBeam;
-    anchor = AnchorMode::Left | AnchorMode::Right | AnchorMode::Top;
     focusable = true;
 
     value = std::wstring();
@@ -98,6 +125,8 @@ void UITextBox::Render(RenderContext& context)
     auto color = IsFocused() ? GetTheme()->SecondaryAlt() : GetTheme()->Secondary();
     context.RenderUIQuad(vec2(position.x, position.y + size.y - 2), vec2(size.x, 2), 0, color, material);
     if (IsFocused())
-        context.RenderUIQuad(vec2(position.x + padding.x + indexPos, position.y + 4), vec2(1, size.y - 12), 0, GetTheme()->Secondary(), material);
+        context.RenderUIQuad(vec2(position.x + padding.x + indexPos, position.y + 4), vec2(1, size.y - 12), 0, GetTheme()->Secondary(), blink_material);
     context.RenderUIText(value, vec2(position.x + padding.x, position.y + (size.y / 1.5)), 0, font, GetTheme()->OnSurface(), material);
 }
+
+Material* UITextBox::blink_material = nullptr;

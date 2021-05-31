@@ -10,21 +10,13 @@ enum class HorizontalSplitSide
 
 class UISplitHorizontal : public UIControl
 {
-    std::vector<int> sides;
+    std::vector<HorizontalSplitSide> sides;
+
 public:
-
     UISplitHorizontal();
-    ~UISplitHorizontal();
 
-    void AddControl(UIControl* control, HorizontalSplitSide side = HorizontalSplitSide::Top);
-    void RemoveControl(UIControl* control);
-
-    void Render(RenderContext& context);
-
+    void AddControl(UIControl* control);
+    void AddControl(UIControl* control, HorizontalSplitSide side);
+    
     void UpdateLayout();
-    void UpdateLayout(vec2 parentPos, vec2 parentSize);
-    void ProcessEvents();
-
-    void SetRoot(UIRoot* root);
-    void ClearRoot();
 };

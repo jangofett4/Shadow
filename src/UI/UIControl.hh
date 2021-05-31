@@ -10,17 +10,20 @@
 
 using namespace glm;
 
+extern CallbackStack<char> StaticHelper;
+
 struct AnchorMode
 {
     enum : uint32_t
     {
-        Normal  = 1 << 1,
-        Top     = 1 << 2,
-        Bottom  = 1 << 3,
-        Left    = 1 << 4,
-        Right   = 1 << 5,
-        Default = Left | Right | Top,
-        All     = Left | Right | Top | Bottom
+        Normal  = 1 << 1,                       // I cant remember
+        Top     = 1 << 2,                       // Toward top of parent
+        Bottom  = 1 << 3,                       // Toward bottom of parent
+        Left    = 1 << 4,                       // Toward left or parent
+        Right   = 1 << 5,                       // Toward right of parent
+        Float   = 1 << 6,                       // Absolute position
+        Default = Left | Right | Top,           // Default anchor for controls
+        All     = Left | Right | Top | Bottom,  // All anchor, generally for containers
     };
 };
 
@@ -72,8 +75,11 @@ public:
 
     uint32_t anchor;            /* Anchoring properties, used by layout engine                  */
     UIEvents* events;           /* Event list for this control                                  */
+
+    bool enabled;               /* Is this control enabled?                                     */
+    bool visible;               /* Is this control visible?                                     */
     
-    // Layer<UIControl*>* layer;/* UI layer that this control resides in                        */
+    Layer<UIControl*>* layer;   /* UI layer that this control resides in                        */
     // Controls that are contained within this control
     // std::vector<UIControl*> controls;
 
@@ -101,7 +107,11 @@ public:
     virtual void AddControl(UIControl* control);
     virtual void RemoveControl(UIControl* control);
 
-    // TODO: For gods sake please optimize this
+    void SetLayer(Layer<UIControl*>* layer);
+
+    virtual void Start();
+
+    void InheritRoot();
     UIRoot* GetRoot();
     
     // Get theme used by this UI context

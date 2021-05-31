@@ -59,6 +59,8 @@ public:
     GLuint GetProgram();
     Uniform* GetUniform(std::string name);
 
+    static Material* QuickMaterial(std::string vs, std::string fs);
+
     void Apply();
     void ApplyUniform(Uniform* uniform);
 };

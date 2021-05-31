@@ -7,11 +7,9 @@ LIST(APPEND SRC
     ${PWD}/UISlider.cc
     ${PWD}/UITextBox.cc
     ${PWD}/UIStack.cc
+    ${PWD}/UISplitHorizontal.cc
+    ${PWD}/UISplitVertical.cc
+    ${PWD}/UIGroupBox.cc
     ${PWD}/UIProgressBar.cc
     ${PWD}/UIBarGraph.cc
-    # Made listbox into a template class, this is not needed
-    # ${PWD}/UIListBox.cc
-    # TODO: these two need special attention, fix them
-    # ${PWD}/UISplitHorizontal.cc
-    ${PWD}/UISplitVertical.cc
 )

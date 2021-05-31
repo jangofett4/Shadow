@@ -127,23 +127,3 @@ std::string Shader::GetError()
 {
     return std::string(errorString);
 }
-
-/* These 2 are not bound to shader in any way. So I'm getting rid of them for sake of simplicity
-void Shader::VertexAttribPointer(int location, size_t size, GLenum type, bool normalize, GLsizei stride, void* offset)
-{
-    // glUseProgram(program); // TODO: unsure if this is how this is supposed to work, check later
-    glVertexAttribPointer(location, size, type, normalize, stride, offset);
-    glEnableVertexAttribArray(location);
-    // attribs.push_back(attrib);
-}
-
-void Shader::EnableVertexAttribArray(int location)
-{
-    // TODO: I unbounded these two functions from shader program
-    // I dont know if this is correct way to do it
-    // as far as I understand all glEnableVertexAttribArray calls are stored in VAO
-    // VAO dynamically assigns values to shaders on draw?
-    // glUseProgram(program); // TODO: yeah
-    glEnableVertexAttribArray(location);
-}
-*/

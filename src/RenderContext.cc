@@ -295,6 +295,7 @@ void RenderContext::RenderUIRect(vec2 position, vec2 size, float rotation, GLflo
     RenderArrays(8, GL_LINES);
 }
 
+// FIXME: This is stupidly un-optimized, reducing fps by 100+ in some cases
 void RenderContext::RenderUIText(std::wstring string, vec2 position, float rotation, GlyphSet* font, vec4 color, Material* material)
 {
     // TODO: use custom material if passed

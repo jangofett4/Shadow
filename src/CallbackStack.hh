@@ -19,6 +19,9 @@ public:
     void CallAll(T* arg);
 
     virtual void Subscribe(std::function<void(T*)> callback);
+
+    void operator()(T* arg);
+    void operator()(std::function<void(T*)> callback);
 };
 
 #include "CallbackStack.ipp"
